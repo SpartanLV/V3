@@ -1,66 +1,64 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
-import { setupSocket } from '../services/socket';
+import { AuthContext } from '../context/AuthContext';
+import { inferRoleFromEmail } from '../utils/roleUtils';
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useContext(AuthContext);
 
-  const handleSubmit = async (e) => {
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
+
+  const handleChange = e => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async e => {
     e.preventDefault();
+    const role = inferRoleFromEmail(form.email);
+    if (!role) {
+      setError('Unrecognized domain. Use @g.bracu.ac.bd or @bracu.ac.bd');
+      return;
+    }
+
     try {
-      const res = await api.post('/auth/login', { email, password });
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
-      setupSocket(res.data.user._id);
-      ```navigate('/dashboard');```
+      const res = await api.post('/auth/login', { ...form, role });
       login(res.data.token, res.data.user);
-      navigate('/dashboard');
+
+      // redirect where they came from, or default by role
+      const from = location.state?.from?.pathname || (role === 'student' ? '/student/home' : '/admin/users');
+      navigate(from, { replace: true });
     } catch (err) {
-      alert(err.response?.data?.error || 'Login failed');
+      setError(err.response?.data?.message || 'Login failed.');
     }
   };
 
   return (
-    <div className="container mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-6">
-          <div className="card">
-            <div className="card-body">
-              <h2 className="text-center mb-4">Admin Login</h2>
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <input
-                    type="email"
-                    className="form-control"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <input
-                    type="password"
-                    className="form-control"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                <button type="submit" className="btn btn-primary w-100">
-                  Login
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+    <form onSubmit={handleSubmit}>
+      {error && <div className="alert alert-danger">{error}</div>}
 
-export default Login;
+      <input
+        type="email"
+        name="email"
+        placeholder="BRACU Email"
+        value={form.email}
+        onChange={handleChange}
+        required
+      />
+
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        value={form.password}
+        onChange={handleChange}
+        required
+      />
+
+      <button type="submit">Login</button>
+    </form>
+  );
+}
