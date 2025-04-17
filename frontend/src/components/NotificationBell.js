@@ -64,3 +64,4 @@ const NotificationBell = ({ userId }) => {
 };
 
 export default NotificationBell;
+
