@@ -1,24 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import api from '../services/api';
+import LoadingSpinner from './LoadingSpinner'; // Create this component
 
 const ProtectedRoute = ({ children }) => {
-  const [isValid, setIsValid] = React.useState(null);
+  const [authStatus, setAuthStatus] = useState({
+    isValid: null,
+    error: null
+  });
 
-  React.useEffect(() => {
+  useEffect(() => {
     const validateToken = async () => {
       try {
         await api.get('/auth/validate');
-        setIsValid(true);
+        setAuthStatus({ isValid: true, error: null });
       } catch (err) {
-        setIsValid(false);
+        setAuthStatus({ isValid: false, error: err.response?.data?.message || 'Unauthorized' });
       }
     };
+    
     validateToken();
+    
+    // Cleanup function
+    return () => {
+      // Cancel any pending requests if needed
+    };
   }, []);
 
-  if (isValid === null) return <div>Loading...</div>;
-  return isValid ? children : <Navigate to="/login" />;
+  if (authStatus.isValid === null) {
+    return <LoadingSpinner />;
+  }
+
+  if (!authStatus.isValid) {
+    // Optional: Store the attempted location for redirect after login
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return children;
 };
 
 export default ProtectedRoute;
