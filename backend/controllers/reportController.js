@@ -4,7 +4,8 @@ const Booking = require('../models/Booking');
 const { Parser } = require('@json2csv/plainjs');
 
 exports.generateReport = async (req, res) => {
-  const { type, format = 'json' } = req.params;
+  const { type } = req.params;
+  const format = req.params.format || 'json'; // Default to JSON if not specified
 
   try {
     // Data fetching

@@ -24,3 +24,22 @@ exports.createNotification = async (req, res) => {
     res.status(500).json({ error: 'Failed to create notification' });
   }
 };
+
+exports.markAsRead = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedNotification = await Notification.findByIdAndUpdate(
+      id,
+      { read: true },
+      { new: true } // Returns the updated document
+    );
+    
+    if (!updatedNotification) {
+      return res.status(404).json({ error: 'Notification not found' });
+    }
+
+    res.json(updatedNotification);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to mark notification as read' });
+  }
+};
