@@ -6,9 +6,9 @@ const auth = require('../middleware/auth');
 const roleCheck = require('../middleware/roleCheck');
 
 // User routes
-router.get('/users', auth, roleCheck('super_admin'), getUsers);
-router.post('/users', auth, roleCheck('super_admin'), addUser);
-router.delete('/users/:id', auth, roleCheck('super_admin'), deleteUser);
+router.get('/users', auth, roleCheck('admin'), getUsers);
+router.post('/users', auth, roleCheck('admin'), addUser);
+router.delete('/users/:id', auth, roleCheck('admin'), deleteUser);
 
 // Report routes (fixed syntax)
 router.get('/reports/:type', auth, roleCheck('admin'), generateReport);

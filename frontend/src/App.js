@@ -14,12 +14,16 @@ import SendNotification from './components/SendNotification';
 import Reports from './components/Reports';
 
 import Login from './pages/Login';
+import Register from './pages/Register';
+import LandingPage from './pages/LandingPage';
 import Unauthorized from './pages/Unauthorized';
 
 function App() {
   const { user, loading } = useContext(AuthContext);
 
-  if (loading) return <div className="text-center mt-5">Loading...</div>;
+  if (loading) {
+    return <div className="text-center mt-5">Loading...</div>;
+  }
 
   return (
     <BrowserRouter>
@@ -28,9 +32,14 @@ function App() {
         {user && <Sidebar />}
         <div className="flex-grow-1 p-4">
           <Routes>
+
+            {/* Public Routes */}
+            <Route path="/" element={user ? <Navigate to="/admin/users" /> : <LandingPage />} />
             <Route path="/login" element={user ? <Navigate to="/admin/users" /> : <Login />} />
+            <Route path="/register" element={user ? <Navigate to="/admin/users" /> : <Register />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
 
+            {/* Protected Admin Routes */}
             <Route
               path="/admin/*"
               element={
@@ -47,7 +56,8 @@ function App() {
               }
             />
 
-            <Route path="*" element={<Navigate to={user ? "/admin/users" : "/login"} replace />} />
+            {/* Catch-all route */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </div>

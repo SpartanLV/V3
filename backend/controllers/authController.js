@@ -26,7 +26,7 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     // infer role from email domain
-    const domain = email.split('@')[1]?.toLowerCase();
+    const domain = email.trim().split('@')[1]?.toLowerCase();
     let role;
     if (domain === 'g.bracu.ac.bd') {
       role = 'student';
