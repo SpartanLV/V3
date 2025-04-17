@@ -15,6 +15,8 @@ const Login = () => {
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
       setupSocket(res.data.user._id);
+      ```navigate('/dashboard');```
+      login(res.data.token, res.data.user);
       navigate('/dashboard');
     } catch (err) {
       alert(err.response?.data?.error || 'Login failed');

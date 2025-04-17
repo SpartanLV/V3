@@ -1,9 +1,11 @@
+// src/components/ProtectedRoute.js
 import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
-import LoadingSpinner from './LoadingSpinner'; // Create this component
+import LoadingSpinner from './LoadingSpinner';
 
 const ProtectedRoute = ({ children }) => {
+  const location = useLocation();            // ← pull the current location
   const [authStatus, setAuthStatus] = useState({
     isValid: null,
     error: null
@@ -15,27 +17,38 @@ const ProtectedRoute = ({ children }) => {
         await api.get('/auth/validate');
         setAuthStatus({ isValid: true, error: null });
       } catch (err) {
-        setAuthStatus({ isValid: false, error: err.response?.data?.message || 'Unauthorized' });
+        setAuthStatus({
+          isValid: false,
+          error: err.response?.data?.message || 'Unauthorized'
+        });
       }
     };
-    
+
     validateToken();
-    
-    // Cleanup function
+
+    // (optionally) return a cleanup to cancel in‑flight requests
     return () => {
-      // Cancel any pending requests if needed
+      // e.g. abortController.abort()
     };
   }, []);
 
+  // show spinner while validating
   if (authStatus.isValid === null) {
     return <LoadingSpinner />;
   }
 
+  // redirect to login, preserving attempted URL
   if (!authStatus.isValid) {
-    // Optional: Store the attempted location for redirect after login
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return (
+      <Navigate
+        to="/login"
+        state={{ from: location }}
+        replace
+      />
+    );
   }
 
+  // authorized: render the protected children
   return children;
 };
 
