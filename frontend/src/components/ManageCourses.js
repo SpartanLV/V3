@@ -15,17 +15,19 @@ const ManageCourses = ({ mode }) => {
   const { courseId } = useParams();
   const navigate = useNavigate();
 
+  // Fetching faculty and course data whenever the component mounts or mode changes
   useEffect(() => {
     fetchFaculty(); // Always fetch faculty list
-
-    if (mode === 'view') fetchCourses();
-    if (mode === 'edit' && courseId) fetchCourseById(courseId);
+    fetchCourses(); // Fetch courses when the component mounts
+    if (mode === 'edit' && courseId) {
+      fetchCourseById(courseId); // Fetch specific course if in edit mode
+    }
   }, [mode, courseId]);
 
   const fetchCourses = async () => {
     try {
       const res = await api.get('/admin/courses');
-      console.log('Fetched courses:', res.data);
+      console.log('Fetched courses:', res.data);  // Log to check courses data
       setCourses(res.data);
     } catch (err) {
       console.error('Failed to fetch courses:', err);
@@ -45,6 +47,7 @@ const ManageCourses = ({ mode }) => {
     try {
       const res = await api.get('/admin/users'); // Assuming this gets all users with role=faculty
       const facultyOnly = res.data.filter(user => user.role === 'faculty');
+      console.log('Faculty List:', facultyOnly);  // Log to check faculty data
       setFacultyList(facultyOnly);
     } catch (err) {
       console.error('Failed to fetch faculty:', err);
@@ -54,7 +57,8 @@ const ManageCourses = ({ mode }) => {
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/admin/courses', newCourse);
+      const courseToAdd = { ...newCourse, faculty: newCourse.faculty }; // Ensure faculty is an ObjectId
+      await api.post('/admin/courses', courseToAdd);
       setNewCourse({ title: '', code: '', description: '', credits: 3, faculty: '' });
       fetchCourses(); // Re-fetch the courses to update the list after adding
       navigate('/admin/courses');
@@ -66,7 +70,8 @@ const ManageCourses = ({ mode }) => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      await api.put(`/admin/courses/${courseId}`, editData);
+      const courseToUpdate = { ...editData, faculty: editData.faculty }; // Ensure faculty is an ObjectId
+      await api.put(`/admin/courses/${courseId}`, courseToUpdate);
       setEditData({ title: '', code: '', description: '', credits: 3, faculty: '' });
       navigate('/admin/courses');
     } catch (err) {
@@ -91,11 +96,6 @@ const ManageCourses = ({ mode }) => {
       ))}
     </select>
   );
-
-  const getFacultyNameById = (facultyId) => {
-    const faculty = facultyList.find(fac => fac._id === facultyId);
-    return faculty ? faculty.name : 'Unknown Faculty';
-  };
 
   if (mode === 'add') {
     return (
@@ -178,7 +178,7 @@ const ManageCourses = ({ mode }) => {
           <li key={course._id}>
             <strong>{course.title}</strong> ({course.code}) - {course.description} 
             <br />
-            <span>Faculty: {getFacultyNameById(course.faculty)}</span>
+            <span>Faculty: {course.faculty.name}</span> {/* Directly access faculty name */}
             <br />
             <button onClick={() => navigate(`/admin/courses/edit/${course._id}`)}>Edit</button>
             <button onClick={() => handleDelete(course._id)}>Delete</button>
