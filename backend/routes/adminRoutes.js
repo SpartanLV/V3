@@ -4,6 +4,7 @@ const router = express.Router();
 const { getUsers, addUser, updateUser, deleteUser } = require('../controllers/userController'); 
 const { createCourse, getCourses, updateCourse, deleteCourse } = require('../controllers/courseController');
 const { generateReport } = require('../controllers/reportController');
+const { getBookings, cancelBooking, resolveBookingConflict } = require('../controllers/bookingController'); // Added booking controller functions
 
 // User routes
 router.get('/users', getUsers);
@@ -17,10 +18,10 @@ router.post('/courses', createCourse);
 router.put('/courses/:id', updateCourse);
 router.delete('/courses/:id', deleteCourse);
 
-// Booking routes
+// Booking routes integrated into adminRoutes
 router.get('/bookings', getBookings);  // Get all bookings
-router.delete('/bookings/:id', cancelBooking);  // Cancel a booking
-router.put('/bookings/:id/resolve', resolveBookingConflict);  // Resolve booking conflict
+router.put('/bookings/:id/cancel', cancelBooking);  // Cancel a booking (PUT)
+router.put('/bookings/:id/resolve', resolveBookingConflict);  // Resolve booking conflict (PUT)
 
 // Report routes
 router.get('/reports/:type', generateReport);

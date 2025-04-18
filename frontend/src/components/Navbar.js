@@ -1,8 +1,7 @@
-// src/components/Navbar.js
 import React, { useContext } from 'react';
-import { Navbar as BsNav, Container, Nav, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import './styling.css'; // Assuming custom CSS file
 
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
@@ -10,20 +9,18 @@ export default function Navbar() {
 
   const handleLogout = () => {
     logout();            // clears token/user
-    navigate('/LandPage');  // 👈 redirect to landingpage
+    navigate('/LandingPage');  // 👈 redirect to landing page
   };
 
   return (
-    <BsNav bg="primary" variant="dark" className="mb-3">
-      <Container fluid>
-        <BsNav.Brand href="/admin/users">Admin Panel</BsNav.Brand>
-        <Nav className="ms-auto">
-          <span className="navbar-text me-3">Welcome, {user?.name}</span>
-          <Button variant="outline-light" onClick={handleLogout}>
-            Logout
-          </Button>
-        </Nav>
-      </Container>
-    </BsNav>
+    <nav className="navbar">
+      <div className="navbar-container">
+        <a href="/admin/users" className="navbar-brand">Admin Panel</a>
+        <div className="navbar-right">
+          <span className="navbar-text">Welcome, {user?.name}</span>
+          <button className="logout-btn" onClick={handleLogout}>Logout</button>
+        </div>
+      </div>
+    </nav>
   );
 }

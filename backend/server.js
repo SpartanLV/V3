@@ -42,8 +42,6 @@ app.set('io', io);
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/admin', require('./middleware/auth'), require('./middleware/roleCheck')('admin'), require('./routes/adminRoutes'));
-app.use('/api/bookings', require('./middleware/auth'), require('./routes/bookingRoutes'));
-app.use('/api/notifications', require('./middleware/auth'), require('./routes/notificationRoutes'));
 
 const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`));
