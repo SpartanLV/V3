@@ -1,25 +1,24 @@
 const express = require('express');
 const router = express.Router();
+
 const { getUsers, addUser, updateUser, deleteUser } = require('../controllers/userController'); 
-const { createCourse, getCourses, updateCourse, deleteCourse } = require('../controllers/courseController');  // Added course routes
+const { createCourse, getCourses, updateCourse, deleteCourse } = require('../controllers/courseController');
 const { generateReport } = require('../controllers/reportController');
-const auth = require('../middleware/auth');
-const roleCheck = require('../middleware/roleCheck');
 
 // User routes
-router.get('/users', auth, roleCheck('admin'), getUsers);
-router.post('/users', auth, roleCheck('admin'), addUser);
-router.put('/users/:id', auth, roleCheck('admin'), updateUser);
-router.delete('/users/:id', auth, roleCheck('admin'), deleteUser);
+router.get('/users', getUsers);
+router.post('/users', addUser);
+router.put('/users/:id', updateUser);
+router.delete('/users/:id', deleteUser);
 
 // Course routes
-router.get('/courses', auth, roleCheck('admin'), getCourses);  // Fetch all courses
-router.post('/courses', auth, roleCheck('admin'), createCourse);  // Add new course
-router.put('/courses/:id', auth, roleCheck('admin'), updateCourse);  // Update course
-router.delete('/courses/:id', auth, roleCheck('admin'), deleteCourse);  // Delete course
+router.get('/courses', getCourses);
+router.post('/courses', createCourse);
+router.put('/courses/:id', updateCourse);
+router.delete('/courses/:id', deleteCourse);
 
 // Report routes
-router.get('/reports/:type', auth, roleCheck('admin'), generateReport);
-router.get('/reports/:type/:format', auth, roleCheck('admin'), generateReport);
+router.get('/reports/:type', generateReport);
+router.get('/reports/:type/:format', generateReport);
 
 module.exports = router;
