@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../services/api';
+import './ManageUsers.css'; // Import CSS for styling
 
 const ManageUsers = ({ mode }) => {
   const [users, setUsers] = useState([]);
@@ -65,9 +66,9 @@ const ManageUsers = ({ mode }) => {
 
   if (mode === 'add') {
     return (
-      <div>
+      <div className="manage-users-container">
         <h2>Add User</h2>
-        <form onSubmit={handleAdd}>
+        <form onSubmit={handleAdd} className="user-form">
           <input
             value={newUser.name}
             onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
@@ -92,8 +93,10 @@ const ManageUsers = ({ mode }) => {
             placeholder="Role"
             required
           />
-          <button type="submit">Add</button>
-          <button onClick={() => navigate('/admin/users')}>Cancel</button>
+          <div className="form-buttons">
+            <button type="submit" className="submit-btn">Add</button>
+            <button type="button" className="cancel-btn" onClick={() => navigate('/admin/users')}>Cancel</button>
+          </div>
         </form>
       </div>
     );
@@ -101,9 +104,9 @@ const ManageUsers = ({ mode }) => {
 
   if (mode === 'edit') {
     return (
-      <div>
+      <div className="manage-users-container">
         <h2>Edit User</h2>
-        <form onSubmit={handleUpdate}>
+        <form onSubmit={handleUpdate} className="user-form">
           <input
             value={editUser.name}
             onChange={(e) => setEditUser({ ...editUser, name: e.target.value })}
@@ -122,23 +125,27 @@ const ManageUsers = ({ mode }) => {
             placeholder="Role"
             required
           />
-          <button type="submit">Update</button>
-          <button onClick={() => navigate('/admin/users')}>Cancel</button>
+          <div className="form-buttons">
+            <button type="submit" className="submit-btn">Update</button>
+            <button type="button" className="cancel-btn" onClick={() => navigate('/admin/users')}>Cancel</button>
+          </div>
         </form>
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="manage-users-container">
       <h2>Manage Users</h2>
-      <button onClick={() => navigate('/admin/users/add')}>Add New User</button>
-      <ul>
+      <button className="add-btn" onClick={() => navigate('/admin/users/add')}>Add New User</button>
+      <ul className="user-list">
         {users.map((user) => (
-          <li key={user._id}>
+          <li key={user._id} className="user-item">
             <strong>{user.name}</strong> ({user.email}) - {user.role}
-            <button onClick={() => navigate(`/admin/users/edit/${user._id}`)}>Edit</button>
-            <button onClick={() => handleDelete(user._id)}>Delete</button>
+            <div className="user-actions">
+              <button onClick={() => navigate(`/admin/users/edit/${user._id}`)} className="edit-btn">Edit</button>
+              <button onClick={() => handleDelete(user._id)} className="delete-btn">Delete</button>
+            </div>
           </li>
         ))}
       </ul>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../services/api'; // Axios setup
+import './ManageCourses.css'; // Import the CSS file
 
 const ManageCourses = ({ mode }) => {
   const [courses, setCourses] = useState([]);
@@ -15,19 +16,17 @@ const ManageCourses = ({ mode }) => {
   const { courseId } = useParams();
   const navigate = useNavigate();
 
-  // Fetching faculty and course data whenever the component mounts or mode changes
   useEffect(() => {
-    fetchFaculty(); // Always fetch faculty list
-    fetchCourses(); // Fetch courses when the component mounts
+    fetchFaculty();
+    fetchCourses();
     if (mode === 'edit' && courseId) {
-      fetchCourseById(courseId); // Fetch specific course if in edit mode
+      fetchCourseById(courseId);
     }
   }, [mode, courseId]);
 
   const fetchCourses = async () => {
     try {
       const res = await api.get('/admin/courses');
-      console.log('Fetched courses:', res.data);  // Log to check courses data
       setCourses(res.data);
     } catch (err) {
       console.error('Failed to fetch courses:', err);
@@ -45,9 +44,8 @@ const ManageCourses = ({ mode }) => {
 
   const fetchFaculty = async () => {
     try {
-      const res = await api.get('/admin/users'); // Assuming this gets all users with role=faculty
+      const res = await api.get('/admin/users');
       const facultyOnly = res.data.filter(user => user.role === 'faculty');
-      console.log('Faculty List:', facultyOnly);  // Log to check faculty data
       setFacultyList(facultyOnly);
     } catch (err) {
       console.error('Failed to fetch faculty:', err);
@@ -57,10 +55,10 @@ const ManageCourses = ({ mode }) => {
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      const courseToAdd = { ...newCourse, faculty: newCourse.faculty }; // Ensure faculty is an ObjectId
+      const courseToAdd = { ...newCourse, faculty: newCourse.faculty };
       await api.post('/admin/courses', courseToAdd);
       setNewCourse({ title: '', code: '', description: '', credits: 3, faculty: '' });
-      fetchCourses(); // Re-fetch the courses to update the list after adding
+      fetchCourses();
       navigate('/admin/courses');
     } catch (err) {
       console.error('Failed to add course:', err.response?.data || err.message);
@@ -70,7 +68,7 @@ const ManageCourses = ({ mode }) => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const courseToUpdate = { ...editData, faculty: editData.faculty }; // Ensure faculty is an ObjectId
+      const courseToUpdate = { ...editData, faculty: editData.faculty };
       await api.put(`/admin/courses/${courseId}`, courseToUpdate);
       setEditData({ title: '', code: '', description: '', credits: 3, faculty: '' });
       navigate('/admin/courses');
@@ -89,7 +87,7 @@ const ManageCourses = ({ mode }) => {
   };
 
   const facultySelect = (value, onChange) => (
-    <select value={value} onChange={onChange} required>
+    <select className="faculty-select" value={value} onChange={onChange} required>
       <option value="">Select Faculty</option>
       {facultyList.map((fac) => (
         <option key={fac._id} value={fac._id}>{fac.name}</option>
@@ -99,35 +97,41 @@ const ManageCourses = ({ mode }) => {
 
   if (mode === 'add') {
     return (
-      <div>
+      <div className="manage-courses-container">
         <h2>Add New Course</h2>
-        <form onSubmit={handleAdd}>
+        <form onSubmit={handleAdd} className="course-form">
           <input
             required
             value={newCourse.title}
             onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })}
-            placeholder="Title"
+            placeholder="Course Title"
+            className="form-input"
           />
           <input
             required
             value={newCourse.code}
             onChange={(e) => setNewCourse({ ...newCourse, code: e.target.value })}
-            placeholder="Code"
+            placeholder="Course Code"
+            className="form-input"
           />
-          <input
+          <textarea
             value={newCourse.description}
             onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })}
-            placeholder="Description"
+            placeholder="Course Description"
+            className="form-textarea"
           />
           <input
             type="number"
             value={newCourse.credits}
             onChange={(e) => setNewCourse({ ...newCourse, credits: parseInt(e.target.value) })}
             placeholder="Credits"
+            className="form-input"
           />
           {facultySelect(newCourse.faculty, (e) => setNewCourse({ ...newCourse, faculty: e.target.value }))}
-          <button type="submit">Add</button>
-          <button type="button" onClick={() => navigate('/admin/courses')}>Cancel</button>
+          <div className="form-actions">
+            <button type="submit" className="btn btn-add">Add Course</button>
+            <button type="button" className="btn btn-cancel" onClick={() => navigate('/admin/courses')}>Cancel</button>
+          </div>
         </form>
       </div>
     );
@@ -135,53 +139,62 @@ const ManageCourses = ({ mode }) => {
 
   if (mode === 'edit') {
     return (
-      <div>
+      <div className="manage-courses-container">
         <h2>Edit Course</h2>
-        <form onSubmit={handleUpdate}>
+        <form onSubmit={handleUpdate} className="course-form">
           <input
             required
             value={editData.title}
             onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-            placeholder="Title"
+            placeholder="Course Title"
+            className="form-input"
           />
           <input
             required
             value={editData.code}
             onChange={(e) => setEditData({ ...editData, code: e.target.value })}
-            placeholder="Code"
+            placeholder="Course Code"
+            className="form-input"
           />
-          <input
+          <textarea
             value={editData.description}
             onChange={(e) => setEditData({ ...editData, description: e.target.value })}
-            placeholder="Description"
+            placeholder="Course Description"
+            className="form-textarea"
           />
           <input
             type="number"
             value={editData.credits}
             onChange={(e) => setEditData({ ...editData, credits: parseInt(e.target.value) })}
             placeholder="Credits"
+            className="form-input"
           />
           {facultySelect(editData.faculty, (e) => setEditData({ ...editData, faculty: e.target.value }))}
-          <button type="submit">Update</button>
-          <button type="button" onClick={() => navigate('/admin/courses')}>Cancel</button>
+          <div className="form-actions">
+            <button type="submit" className="btn btn-update">Update Course</button>
+            <button type="button" className="btn btn-cancel" onClick={() => navigate('/admin/courses')}>Cancel</button>
+          </div>
         </form>
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="manage-courses-container">
       <h2>All Courses</h2>
-      <button onClick={() => navigate('/admin/courses/add')}>Add New Course</button>
-      <ul>
+      <button className="btn btn-add" onClick={() => navigate('/admin/courses/add')}>Add New Course</button>
+      <ul className="course-list">
         {courses.map((course) => (
-          <li key={course._id}>
-            <strong>{course.title}</strong> ({course.code}) - {course.description} 
-            <br />
-            <span>Faculty: {course.faculty.name}</span> {/* Directly access faculty name */}
-            <br />
-            <button onClick={() => navigate(`/admin/courses/edit/${course._id}`)}>Edit</button>
-            <button onClick={() => handleDelete(course._id)}>Delete</button>
+          <li key={course._id} className="course-item">
+            <div className="course-details">
+              <strong>{course.title}</strong> ({course.code}) - {course.description}
+              <br />
+              <span>Faculty: {course.faculty.name}</span>
+            </div>
+            <div className="course-actions">
+              <button onClick={() => navigate(`/admin/courses/edit/${course._id}`)} className="btn btn-edit">Edit</button>
+              <button onClick={() => handleDelete(course._id)} className="btn btn-delete">Delete</button>
+            </div>
           </li>
         ))}
       </ul>
