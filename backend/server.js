@@ -1,3 +1,4 @@
+// server.js
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -8,19 +9,24 @@ const cors = require('cors');
 const app = express();
 const httpServer = createServer(app);
 
-// Middleware
-app.use(cors());
+// 🛑 IMPORTANT: Apply CORS middleware BEFORE all other middlewares/routes
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
+
+// Other middleware
 app.use(express.json());
 
-// Database
+// MongoDB connection
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/admin-module')
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error(err));
 
-// Socket.io
+// Socket.io setup
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST']
   }
 });

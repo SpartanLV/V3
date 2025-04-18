@@ -25,6 +25,9 @@ exports.login = async (req, res) => {
 exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
+    console.log("Register request body:", req.body); // Log the incoming request data
+
     // infer role from email domain
     const domain = email.trim().split('@')[1]?.toLowerCase();
     let role;
@@ -40,12 +43,15 @@ exports.register = async (req, res) => {
 
     // prevent duplicate signup
     if (await User.findOne({ email })) {
+      console.log("Email already registered:", email); // Log duplicate email check
       return res.status(409).json({ error: 'Email already registered' });
     }
 
-    // create user (password hashing via pre‑save hook)
+    // create user (password hashing via pre-save hook)
     const user = new User({ name, email, password, role });
     await user.save();
+
+    console.log("Created user:", user); // Log user creation
 
     // optionally—immediate login response:
     const token = jwt.sign(
@@ -59,10 +65,11 @@ exports.register = async (req, res) => {
       user: { _id: user._id, name: user.name, role: user.role }
     });
   } catch (err) {
-    console.error('Registration error:', err);
+    console.error("Registration error:", err); // Log the error
     res.status(500).json({ error: 'Registration failed' });
   }
 };
+
 
 exports.validateToken = (req, res) => {
   res.json({ valid: true, user: req.user });

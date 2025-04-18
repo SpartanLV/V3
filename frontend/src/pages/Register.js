@@ -14,21 +14,29 @@ export default function Register() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-  
+    
+    // Validate email domain for role
     const role = inferRoleFromEmail(form.email);
     if (!role) {
       setError('Please use a @g.bracu.ac.bd (student) or @bracu.ac.bd (staff) email.');
       return;
     }
   
+    console.log("Registering with:", form);
+    console.log("Inferred role:", role);
+    
     try {
-      await api.post('/auth/register', form); // ← removed role
-      navigate('/login');
+      // Send form data, including role, to backend
+      console.log("Form data before registration:", form)
+      const response = await api.post('/auth/register', { ...form, role });
+      console.log("Registration success:", response.data);
+
+      navigate('/login'); // Redirect to login after successful registration
     } catch (err) {
+      console.error("Registration failed:", err.response?.data || err.message);
       setError(err.response?.data?.error || 'Registration failed.');
     }
   };
-  
 
   return (
     <form onSubmit={handleSubmit}>
