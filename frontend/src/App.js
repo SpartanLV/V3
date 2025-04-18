@@ -27,12 +27,12 @@ function App() {
 
   return (
     <BrowserRouter>
+      {/* Show Navbar and Sidebar only if user is logged in */}
       {user && <Navbar />}
       <div className="d-flex">
         {user && <Sidebar />}
         <div className="flex-grow-1 p-4">
           <Routes>
-
             {/* Public Routes */}
             <Route path="/" element={user ? <Navigate to="/admin/users" /> : <LandingPage />} />
             <Route path="/login" element={user ? <Navigate to="/admin/users" /> : <Login />} />
@@ -40,21 +40,17 @@ function App() {
             <Route path="/unauthorized" element={<Unauthorized />} />
 
             {/* Protected Admin Routes */}
-            <Route
-              path="/admin/*"
-              element={
-                <ProtectedRoute>
-                  <Routes>
-                    <Route path="users" element={<ManageUsers />} />
-                    <Route path="courses" element={<ManageCourses />} />
-                    <Route path="bookings" element={<ManageBookings />} />
-                    <Route path="notifications" element={<SendNotification />} />
-                    <Route path="reports" element={<Reports />} />
-                    <Route path="*" element={<Navigate to="users" replace />} />
-                  </Routes>
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/admin/users" element={<ProtectedRoute><ManageUsers /></ProtectedRoute>} />
+            <Route path="/admin/users/add" element={<ProtectedRoute><ManageUsers mode="add" /></ProtectedRoute>} />
+            <Route path="/admin/users/edit/:userId" element={<ProtectedRoute><ManageUsers mode="edit" /></ProtectedRoute>} />
+
+            <Route path="/admin/courses" element={<ProtectedRoute><ManageCourses /></ProtectedRoute>} />
+            <Route path="/admin/courses/add" element={<ProtectedRoute><ManageCourses mode="add" /></ProtectedRoute>} />
+            <Route path="/admin/courses/edit/:courseId" element={<ProtectedRoute><ManageCourses mode="edit" /></ProtectedRoute>} />
+
+            <Route path="/admin/bookings" element={<ProtectedRoute><ManageBookings /></ProtectedRoute>} />
+            <Route path="/admin/notifications" element={<ProtectedRoute><SendNotification /></ProtectedRoute>} />
+            <Route path="/admin/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
 
             {/* Catch-all route */}
             <Route path="*" element={<Navigate to="/" replace />} />

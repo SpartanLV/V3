@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// src/components/ManageBookings.js
+import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 
 const ManageBookings = () => {
@@ -7,35 +8,43 @@ const ManageBookings = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const res = await api.get('/bookings');
+        const res = await api.get('/admin/bookings');
         setBookings(res.data);
       } catch (err) {
-        console.error('Failed to fetch bookings:', err);
+        console.error('Failed to fetch bookings', err);
       }
     };
     fetchBookings();
   }, []);
 
+  const cancelBooking = async (id) => {
+    try {
+      await api.delete(`/admin/bookings/${id}`);
+      setBookings(bookings.filter((booking) => booking._id !== id));
+    } catch (err) {
+      console.error('Failed to cancel booking', err);
+    }
+  };
+
   return (
     <div>
-      <h3>Manage Bookings</h3>
-      <table className="table">
+      <h2>Manage Field Bookings</h2>
+      <table>
         <thead>
           <tr>
-            <th>Facility</th>
-            <th>Time Slot</th>
-            <th>Status</th>
+            <th>Booking Date</th>
+            <th>Field</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {bookings.map(booking => (
+          {bookings.map((booking) => (
             <tr key={booking._id}>
-              <td>{booking.facility}</td>
+              <td>{booking.date}</td>
+              <td>{booking.field}</td>
               <td>
-                {new Date(booking.startTime).toLocaleString()} - 
-                {new Date(booking.endTime).toLocaleTimeString()}
+                <button onClick={() => cancelBooking(booking._id)}>Cancel</button>
               </td>
-              <td>{booking.status}</td>
             </tr>
           ))}
         </tbody>
