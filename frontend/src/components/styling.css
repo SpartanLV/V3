@@ -1,0 +1,223 @@
+/* ====== Fonts & Reset ====== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f7f9fc;
+  color: #2c3e50;
+}
+
+/* ====== Container Base ====== */
+.manage-users-container,
+.manage-courses-container,
+.manage-bookings-container {
+  max-width: 960px;
+  margin: 60px auto;
+  padding: 40px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+/* ====== Heading ====== */
+.manage-users-container h2,
+.manage-courses-container h2,
+.manage-bookings-container h2 {
+  font-size: 2.2rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #1a1a1a;
+  position: relative;
+}
+
+.manage-users-container h2::after,
+.manage-courses-container h2::after,
+.manage-bookings-container h2::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #007bff, #00c6ff);
+  margin: 12px auto 0;
+  border-radius: 2px;
+}
+
+/* ====== Form Inputs ====== */
+.user-form,
+.course-form,
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-input,
+.form-textarea,
+select {
+  padding: 14px 16px;
+  font-size: 1rem;
+  border: 1px solid #d0d0d0;
+  border-radius: 12px;
+  background: #f9f9f9;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+select:focus {
+  border-color: #007bff;
+  background: #ffffff;
+  outline: none;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* ====== Buttons ====== */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 12px 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.btn-add {
+  background: linear-gradient(135deg, #28a745, #3ddc97);
+  color: #fff;
+}
+
+.btn-update {
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+  color: #fff;
+}
+
+.btn-cancel {
+  background: #6c757d;
+  color: #fff;
+}
+
+.btn-edit {
+  background: #ffc107;
+  color: #212529;
+}
+
+.btn-delete {
+  background: #dc3545;
+  color: #fff;
+}
+
+.btn-view {
+  background: #17a2b8;
+  color: #fff;
+}
+
+/* ====== List Styles ====== */
+.user-list,
+.course-list,
+.booking-list {
+  list-style: none;
+  padding: 0;
+  margin: 30px 0 0;
+}
+
+.user-item,
+.course-item,
+.booking-item {
+  background: #fafafa;
+  border: 1px solid #e5e5e5;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.2s ease;
+}
+
+.user-item:hover,
+.course-item:hover,
+.booking-item:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.user-details,
+.course-details,
+.booking-details {
+  flex: 1;
+  line-height: 1.6;
+  font-size: 1rem;
+  color: #444;
+}
+
+.user-actions,
+.course-actions,
+.booking-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ====== Dropdown Styling ====== */
+.faculty-select {
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #f0f0f0;
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 640px) {
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .user-actions,
+  .course-actions,
+  .booking-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .user-item,
+  .course-item,
+  .booking-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

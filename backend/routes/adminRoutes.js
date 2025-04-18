@@ -17,6 +17,11 @@ router.post('/courses', createCourse);
 router.put('/courses/:id', updateCourse);
 router.delete('/courses/:id', deleteCourse);
 
+// Booking routes
+router.get('/bookings', getBookings);  // Get all bookings
+router.delete('/bookings/:id', cancelBooking);  // Cancel a booking
+router.put('/bookings/:id/resolve', resolveBookingConflict);  // Resolve booking conflict
+
 // Report routes
 router.get('/reports/:type', generateReport);
 router.get('/reports/:type/:format', generateReport);

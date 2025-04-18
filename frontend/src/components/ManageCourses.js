@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../services/api'; // Axios setup
-import './ManageCourses.css'; // Import the CSS file
+import './styling.css'; // Import the CSS file
 
 const ManageCourses = ({ mode }) => {
   const [courses, setCourses] = useState([]);

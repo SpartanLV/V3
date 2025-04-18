@@ -1,27 +1,48 @@
 const Booking = require('../models/Booking');
 
-exports.createBooking = async (req, res) => {
+// Get all bookings
+exports.getBookings = async (req, res) => {
   try {
-    const booking = new Booking({
-      ...req.body,
-      user: req.user.userId
-    });
-    await booking.save();
-    res.status(201).json(booking);
+    const bookings = await Booking.find()
+      .populate('user', 'name email') // Assuming User model contains 'name' and 'email'
+      .exec();
+    res.json(bookings);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ error: 'Failed to fetch bookings' });
   }
 };
 
-exports.resolveConflict = async (req, res) => {
+// Cancel a booking (update status to cancelled)
+exports.cancelBooking = async (req, res) => {
   try {
     const booking = await Booking.findByIdAndUpdate(
       req.params.id,
-      { conflictResolved: true },
+      { status: 'cancelled' }, // Change status to 'cancelled'
       { new: true }
     );
-    res.json(booking);
+    if (!booking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+    res.json({ message: 'Booking cancelled successfully', booking });
   } catch (err) {
-    res.status(400).json({ error: 'Conflict resolution failed' });
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Resolve a booking conflict (set conflictResolved to true)
+exports.resolveBookingConflict = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+    if (!booking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    // Resolve the conflict
+    booking.conflictResolved = true;
+    await booking.save();
+
+    res.json({ message: 'Booking conflict resolved', booking });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
