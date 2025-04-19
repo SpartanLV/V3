@@ -5,10 +5,9 @@ const { Parser } = require('@json2csv/plainjs');
 
 exports.generateReport = async (req, res) => {
   const { type } = req.params;
-  const format = req.params.format || 'json'; // Default to JSON if not specified
+  const format = req.query.format || 'json'; // ✅ Corrected here
 
   try {
-    // Data fetching
     let data;
     switch (type) {
       case 'users':
@@ -28,22 +27,20 @@ exports.generateReport = async (req, res) => {
         return res.status(400).json({ error: 'Invalid report type' });
     }
 
-    // Handle empty data
     if (!data || data.length === 0) {
       return res.status(404).json({ message: 'No data found' });
     }
 
-    // CSV Conversion
     if (format === 'csv') {
       try {
         const opts = {
           fields: Object.keys(data[0]).filter(key => !key.includes('_id') && !key.includes('password')),
-          unwind: ['sessions'] // For nested arrays if needed
+          unwind: ['sessions']
         };
         
         const parser = new Parser(opts);
         const csv = parser.parse(data);
-        
+
         res.header('Content-Type', 'text/csv');
         res.attachment(`${type}_report_${new Date().toISOString().split('T')[0]}.csv`);
         return res.send(csv);
@@ -53,7 +50,6 @@ exports.generateReport = async (req, res) => {
       }
     }
 
-    // Default JSON response
     res.json({
       success: true,
       count: data.length,
