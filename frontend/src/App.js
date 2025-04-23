@@ -22,6 +22,7 @@ import Unauthorized from './pages/Unauthorized';
 import StudentDashboard from './pages/StudentDashboard';
 import FacultyDashboard from './pages/FacultyDashboard';
 import Profile from './pages/Profile';  // Import the Profile page
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   const { user, loading } = useContext(AuthContext);
@@ -96,7 +97,7 @@ function App() {
             />
             <Route
               path="/student/profile"
-              element={<ProtectedRoute allowedRoles={['student']}><Profile /></ProtectedRoute>}
+              element={<ProtectedRoute allowedRoles={['student']}><ProfilePage /></ProtectedRoute>}
             />
 
             {/* Faculty Routes */}
@@ -106,7 +107,7 @@ function App() {
             />
             <Route
               path="/faculty/profile"
-              element={<ProtectedRoute allowedRoles={['faculty']}><Profile /></ProtectedRoute>}
+              element={<ProtectedRoute allowedRoles={['faculty']}><ProfilePage /></ProtectedRoute>}
             />
 
             {/* Catch-all route */}
