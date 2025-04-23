@@ -1,10 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Button, Container, Row, Col, Card, Alert, Spinner } from 'react-bootstrap';
+// frontend/src/components/ProfileManagement.js
+
+import React, { useState, useEffect, useContext } from 'react';
+import {
+  Form,
+  Button,
+  Container,
+  Row,
+  Col,
+  Card,
+  Alert,
+  Spinner
+} from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './ProfileManagement.css';
+import { AuthContext } from '../context/AuthContext';
+import './styling.css';
 
-const ProfileManagement = () => {
+export default function ProfileManagement() {
+  // 1) Hooks up front
+  const navigate = useNavigate();
+  const { refreshUser } = useContext(AuthContext);
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -15,129 +31,107 @@ const ProfileManagement = () => {
     profilePicture: null
   });
   const [previewImage, setPreviewImage] = useState(null);
-  const navigate = useNavigate();
 
+  // 2) Fetch profile once
   useEffect(() => {
-    fetchUserProfile();
-  }, []);
-
-  const fetchUserProfile = async () => {
-    try {
+    (async () => {
       const token = localStorage.getItem('token');
       if (!token) {
         navigate('/login');
         return;
       }
 
-      const response = await axios.get('/api/users/profile', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      setUser(response.data);
-      setFormData({
-        name: response.data.name,
-        email: response.data.email,
-        profilePicture: null
-      });
-      
-      if (response.data.profilePictureUrl) {
-        setPreviewImage(response.data.profilePictureUrl);
+      try {
+        const { data } = await axios.get('/api/users/profile', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setUser(data);
+        setFormData({
+          name: data.name,
+          email: data.email,
+          profilePicture: null
+        });
+        setPreviewImage(data.profilePictureUrl || null);
+      } catch (err) {
+        console.error('Fetch error:', err);
+        setError('Could not load profile.');
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
-    } catch (err) {
-      setError('Failed to load profile. Please try again.');
-      setLoading(false);
-      console.error('Error fetching profile:', err);
-    }
-  };
+    })();
+  }, [navigate]);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+  // 3) Handlers
+  const handleChange = e =>
+    setFormData(f => ({ ...f, [e.target.name]: e.target.value }));
 
-  const handleFileChange = (e) => {
+  const handleFileChange = e => {
     const file = e.target.files[0];
-    if (file) {
-      setFormData({
-        ...formData,
-        profilePicture: file
-      });
-      
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+    setFormData(f => ({ ...f, profilePicture: file }));
+    const reader = new FileReader();
+    reader.onloadend = () => setPreviewImage(reader.result);
+    reader.readAsDataURL(file);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setError('');
     setSuccess('');
     setLoading(true);
-    
+
     try {
       const token = localStorage.getItem('token');
-      
-      // Create FormData object for file upload
-      const data = new FormData();
-      data.append('name', formData.name);
-      data.append('email', formData.email);
+      const payload = new FormData();
+      payload.append('name', formData.name);
       if (formData.profilePicture) {
-        data.append('profilePicture', formData.profilePicture);
+        payload.append('profilePicture', formData.profilePicture);
       }
-      
-      const response = await axios.put('/api/users/profile', data, {
-        headers: { 
+
+      const { data } = await axios.put('/api/users/profile', payload, {
+        headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
         }
       });
-      
-      setUser(response.data);
-      setSuccess('Profile updated successfully!');
-      setLoading(false);
+
+      setSuccess('Profile updated!');
+      await refreshUser();
+      navigate(`/${data.role}/profile`);
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to update profile');
+      console.error('Update error:', err);
+      setError(err.response?.data?.error || 'Update failed');
       setLoading(false);
-      console.error('Error updating profile:', err);
     }
   };
 
-  if (loading && !user) {
-    return (
-      <Container className="d-flex justify-content-center mt-5">
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </Container>
-    );
-  }
-
-  return (
+  // 4) Single return: spinner if loading, otherwise form
+  return loading ? (
+    <Container className="d-flex justify-content-center mt-5">
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading…</span>
+      </Spinner>
+    </Container>
+  ) : (
     <Container className="profile-container">
       <Row className="justify-content-center">
         <Col md={8}>
           <Card className="profile-card">
-            <Card.Header as="h4" className="text-center">Profile Management</Card.Header>
+            <Card.Header as="h4" className="text-center">
+              Profile Management
+            </Card.Header>
             <Card.Body>
               {error && <Alert variant="danger">{error}</Alert>}
               {success && <Alert variant="success">{success}</Alert>}
-              
+
               <Form onSubmit={handleSubmit}>
                 <Row className="mb-4 text-center">
                   <Col>
                     <div className="profile-image-container">
                       {previewImage ? (
-                        <img 
-                          src={previewImage} 
-                          alt="Profile Preview" 
+                        <img
+                          src={previewImage}
+                          alt="Preview"
                           className="profile-image"
                         />
                       ) : (
@@ -149,17 +143,18 @@ const ProfileManagement = () => {
                     <Form.Group controlId="profilePicture" className="mt-3">
                       <Form.Label className="btn btn-outline-primary">
                         Choose Profile Picture
-                        <Form.Control 
-                          type="file" 
+                        <Form.Control
+                          type="file"
                           accept="image/*"
                           onChange={handleFileChange}
                           hidden
                         />
-                      </Form.Label>
+                      </Form.Control>
+                    </Form.Label>
                     </Form.Group>
                   </Col>
                 </Row>
-                
+
                 <Form.Group className="mb-3">
                   <Form.Label>Name</Form.Label>
                   <Form.Control
@@ -170,51 +165,23 @@ const ProfileManagement = () => {
                     required
                   />
                 </Form.Group>
-                
+
                 <Form.Group className="mb-3">
                   <Form.Label>Email</Form.Label>
                   <Form.Control
                     type="email"
                     name="email"
                     value={formData.email}
-                    onChange={handleChange}
-                    required
                     disabled
                   />
                   <Form.Text className="text-muted">
-                    Email address cannot be changed as it's linked to your role.
+                    Email cannot be changed.
                   </Form.Text>
                 </Form.Group>
-                
-                <Form.Group className="mb-3">
-                  <Form.Label>Role</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={user?.role}
-                    disabled
-                  />
-                </Form.Group>
-                
+
                 <div className="d-grid gap-2">
-                  <Button 
-                    variant="primary" 
-                    type="submit" 
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <>
-                        <Spinner
-                          as="span"
-                          animation="border"
-                          size="sm"
-                          role="status"
-                          aria-hidden="true"
-                        />
-                        <span className="ms-2">Updating...</span>
-                      </>
-                    ) : (
-                      'Update Profile'
-                    )}
+                  <Button variant="primary" type="submit" disabled={loading}>
+                    {loading ? 'Updating…' : 'Update Profile'}
                   </Button>
                 </div>
               </Form>
@@ -224,6 +191,4 @@ const ProfileManagement = () => {
       </Row>
     </Container>
   );
-};
-
-export default ProfileManagement;
+}

@@ -1,22 +1,43 @@
-const express = require('express');
-const router = express.Router();
-const { viewUserProfile, updateUserProfile, getUsers } = require('../controllers/userController');
-const auth = require('../middleware/auth');
-const roleCheck = require('../middleware/roleCheck');  // Assuming you have a middleware to check for admin role
+const express  = require('express');
+const path     = require('path');
+const multer   = require('multer');
+const router   = express.Router();
+const auth     = require('../middleware/auth');
+const roleCheck= require('../middleware/roleCheck');
+const {
+  viewUserProfile,
+  updateUserProfile,
+  getUsers
+} = require('../controllers/userController');
 
+// Multer configuration: save in /uploads/profile, prepend timestamp
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../uploads/profile'));
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+const upload = multer({ storage });
+
+// Test route
 router.get('/test', (req, res) => {
   res.send('✅ userRoutes are working');
 });
 
-// Protected routes
-
-// View own profile (accessible by authenticated users only)
+// View own profile
 router.get('/profile', auth, viewUserProfile);
 
-// Update own profile (accessible by authenticated users only)
-router.put('/profile', auth, updateUserProfile);
+// Update own profile, handling the “profilePicture” file field
+router.put(
+  '/profile',
+  auth,
+  upload.single('profilePicture'),
+  updateUserProfile
+);
 
-// Get all users (only accessible to admins)
+// Admin: get all users
 router.get('/users', auth, roleCheck('admin'), getUsers);
 
 module.exports = router;

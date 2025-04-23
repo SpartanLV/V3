@@ -7,7 +7,12 @@ export const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     const stored = localStorage.getItem('user');
-    return stored ? JSON.parse(stored) : null;
+    try {
+      return stored ? JSON.parse(stored) : null;
+    } catch (e) {
+      console.error("Error parsing 'user' from localStorage:", e);
+      return null;
+    }
   });
   const [loading, setLoading] = useState(true);
 
@@ -24,19 +29,18 @@ export function AuthProvider({ children }) {
           setUser(null);
         }
       } catch (err) {
-        console.error('Token validation failed:', err);  // Log the error for debugging
+        console.error('Token validation failed:', err);
         setUser(null); // Clear user data on failure
       } finally {
         setLoading(false); // End loading state
       }
     };
-  
+
     validate();
     return () => {
       disconnectSocket();
     };
   }, []);
-  
 
   const login = (token, user) => {
     localStorage.setItem('token', token); // Store the token in localStorage
@@ -52,8 +56,18 @@ export function AuthProvider({ children }) {
     setUser(null); // Clear the user from context
   };
 
+  const refreshUser = async () => {
+    try {
+      const res = await api.get('/auth/validate');
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+      setUser(res.data.user);
+    } catch (err) {
+      console.error('Failed to refresh user data:', err);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

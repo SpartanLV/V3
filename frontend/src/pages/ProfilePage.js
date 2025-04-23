@@ -1,20 +1,14 @@
+// src/pages/ProfilePage.js
 import React from 'react';
-import { Container } from 'react-bootstrap';
-import ProfileManagement from '../components/profile/ProfileManagement';
-import Header from '../components/common/Header';
-import Footer from '../components/common/Footer';
+import ProfileManagement from '../components/ProfileManagement';
 
-const ProfilePage = () => {
+function ProfilePage() {
   return (
-    <>
-      <Header />
-      <Container className="py-5">
-        <h2 className="text-center mb-4">My Profile</h2>
-        <ProfileManagement />
-      </Container>
-      <Footer />
-    </>
+    <div className="profile-page-container">
+      <h1>Your Profile</h1>
+      <ProfileManagement />
+    </div>
   );
-};
+}
 
 export default ProfilePage;
