@@ -1,6 +1,7 @@
 const User = require('../models/User');
 
 module.exports = {
+  // Get all users (admin access only)
   getUsers: async (req, res) => {
     try {
       const users = await User.find();
@@ -10,6 +11,7 @@ module.exports = {
     }
   },
 
+  // Add a new user (admin access)
   addUser: async (req, res) => {
     try {
       const user = new User(req.body);
@@ -20,8 +22,15 @@ module.exports = {
     }
   },
 
+  // Update a user (admin or own profile)
   updateUser: async (req, res) => {
     try {
+      const userId = req.user.userId; // Get the userId from the token
+      // Check if the user is an admin or trying to update their own profile
+      if (req.params.id !== userId && req.user.role !== 'admin') {
+        return res.status(403).json({ error: 'You can only update your own profile or you need admin access' });
+      }
+
       const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -32,6 +41,7 @@ module.exports = {
     }
   },
 
+  // Delete a user (admin access)
   deleteUser: async (req, res) => {
     try {
       const user = await User.findByIdAndDelete(req.params.id);
@@ -44,9 +54,10 @@ module.exports = {
     }
   },
 
-  // View own profile
+  // View own profile (only accessible by the authenticated user)
   viewUserProfile: async (req, res) => {
     try {
+      console.log("🔍 User profile route hit");
       const userId = req.user.userId; // Get the authenticated user's ID from the token
       const user = await User.findById(userId).select('-password'); // Exclude password field
       if (!user) {

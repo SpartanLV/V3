@@ -14,6 +14,7 @@ const Profile = () => {
     email: '',
     password: '',
   });
+  const [error, setError] = useState(null); // State to handle errors
 
   const navigate = useNavigate();
 
@@ -33,7 +34,10 @@ const Profile = () => {
         })
         .catch((error) => {
           console.error("Error fetching profile:", error);
-          navigate('/login');  // Redirect to login if the user isn't authenticated
+          setError("Error fetching profile data.");
+          if (error.response?.status === 401 || error.response?.status === 403) {
+            navigate('/login');  // Redirect to login if the user isn't authenticated
+          }
         });
     }
   }, [user, navigate]);
@@ -51,17 +55,27 @@ const Profile = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Send update request to the backend
+    // Send update request to the backend, excluding the password if it's empty
+    const dataToUpdate = { ...formData };
+    if (!formData.password) {
+      delete dataToUpdate.password;  // Don't send password if it's empty
+    }
+
     api
-      .put('/users/profile', formData)
+      .put('/users/profile', dataToUpdate)
       .then((response) => {
         setProfile(response.data);  // Update local profile data
         setIsEditing(false);  // Exit edit mode
       })
       .catch((error) => {
         console.error("Error updating profile:", error);
+        setError("Error updating profile data.");
       });
   };
+
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
 
   if (!profile) {
     return <LoadingSpinner />; // Show loading spinner while profile is being fetched
@@ -74,8 +88,8 @@ const Profile = () => {
       {/* If not editing, show profile data */}
       {!isEditing ? (
         <div className="profile-info">
-          <p><strong>Name:</strong> {profile.name}</p>
-          <p><strong>Email:</strong> {profile.email}</p>
+          <p><strong>Name:</strong> {profile?.name}</p>
+          <p><strong>Email:</strong> {profile?.email}</p>
           {/* Add more fields as needed */}
           <button onClick={() => setIsEditing(true)}>Edit Profile</button>
         </div>

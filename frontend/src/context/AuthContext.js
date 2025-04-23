@@ -14,28 +14,29 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const validate = async () => {
       try {
-        // Check if token exists in localStorage
         const token = localStorage.getItem('token');
         if (token) {
-          // Try to validate the token with the backend
+          // Validate the token
           const res = await api.get('/auth/validate');
           setUser(res.data.user);
           setupSocket(res.data.user._id);
         } else {
-          setUser(null); // No token found, clear user data
+          setUser(null);
         }
       } catch (err) {
-        setUser(null); // Token is invalid or expired, clear user data
+        console.error('Token validation failed:', err);  // Log the error for debugging
+        setUser(null); // Clear user data on failure
       } finally {
-        setLoading(false);
+        setLoading(false); // End loading state
       }
     };
-
+  
     validate();
     return () => {
-      disconnectSocket(); // Clean up the socket connection when the component unmounts
+      disconnectSocket();
     };
   }, []);
+  
 
   const login = (token, user) => {
     localStorage.setItem('token', token); // Store the token in localStorage

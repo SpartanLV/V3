@@ -43,6 +43,8 @@ app.set('io', io);
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/admin', require('./middleware/auth'), require('./middleware/roleCheck')('admin'), require('./routes/adminRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
+console.log('User routes mounted at /api/users');
 
 const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`));
