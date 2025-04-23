@@ -6,7 +6,7 @@ exports.createCourse = async (req, res) => {
     const { title, code, description, credits, faculty } = req.body;
 
     // Ensure faculty is a valid ObjectId
-    const validFacultyId = mongoose.Types.ObjectId(faculty); // Corrected line
+    const validFacultyId = new mongoose.Types.ObjectId(faculty); // Corrected line
     
     // Check if course code already exists
     const existingCourse = await Course.findOne({ code });
@@ -35,7 +35,7 @@ exports.updateCourse = async (req, res) => {
   try {
     // Ensure the faculty field is valid if it's being updated
     if (req.body.faculty) {
-      req.body.faculty = mongoose.Types.ObjectId(req.body.faculty);
+      req.body.faculty = new mongoose.Types.ObjectId(req.body.faculty);
     }
 
     const course = await Course.findByIdAndUpdate(req.params.id, req.body, { new: true });
