@@ -149,9 +149,8 @@ export default function ProfileManagement() {
                           onChange={handleFileChange}
                           hidden
                         />
-                      </Form.Control>
-                    </Form.Label>
-                    </Form.Group>
+                      </Form.Label>
+                      </Form.Group>
                   </Col>
                 </Row>
 
