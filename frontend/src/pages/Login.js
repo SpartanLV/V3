@@ -29,7 +29,10 @@ export default function Login() {
       login(res.data.token, res.data.user);
 
       // redirect where they came from, or default by role
-      const from = location.state?.from?.pathname || (role === 'student' ? '/student/home' : '/admin/users');
+      const from = location.state?.from?.pathname || (
+        role === 'student' ? '/student/dashboard' :
+        role === 'faculty' ? '/faculty/dashboard' : '/admin/dashboard'
+      );
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed.');
