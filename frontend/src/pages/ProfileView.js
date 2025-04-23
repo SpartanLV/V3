@@ -1,35 +1,32 @@
 // frontend/src/pages/ProfileView.js
 import React, { useState, useEffect } from 'react';
-import { Container, Card, Spinner, Alert, Button } from 'react-bootstrap';
+import { Container, Card, Spinner, Alert, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function ProfileView() {
-  const [user, setUser]     = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState('');
-  const navigate = useNavigate();
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        const userString = localStorage.getItem('user');
-  
-        if (!userString || userString === 'undefined') {
-          // Handle invalid or missing user data
-          setError('No user data found.');
+        if (!token) {
+          setError('Authentication required. Please log in.');
+          setLoading(false);
           return;
         }
-  
-        const user = JSON.parse(userString); // Safe parse of user data
+
         const { data } = await axios.get('/api/users/profile', {
           headers: { Authorization: `Bearer ${token}` }
         });
-  
+
         setUser(data);
       } catch (err) {
-        setError('Failed to load profile.');
+        console.error('Profile fetch error:', err);
+        setError('Failed to load profile. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -44,6 +41,7 @@ export default function ProfileView() {
       </Container>
     );
   }
+  
   if (error) {
     return (
       <Container className="mt-5">
@@ -55,12 +53,12 @@ export default function ProfileView() {
   return (
     <Container className="mt-4" style={{ maxWidth: '600px' }}>
       <Card>
-        <Card.Header as="h4">Your Profile</Card.Header>
+        <Card.Header as="h4">Profile Information</Card.Header>
         <Card.Body>
           <div className="text-center mb-3">
-          {user.profilePic ? (
+          {user.profilePictureUrl ? (
             <img
-              src={`http://localhost:5000/uploads/${user.profilePic}`}
+              src={user.profilePictureUrl}
               alt="Profile"
               style={{
                 width: '120px',
@@ -69,7 +67,6 @@ export default function ProfileView() {
                 objectFit: 'cover'
               }}
             />
-
             ) : (
               <div
                 style={{
@@ -82,21 +79,30 @@ export default function ProfileView() {
                   margin: '0 auto'
                 }}
               >
-                {user.name.charAt(0).toUpperCase()}
+                {user.name ? user.name.charAt(0).toUpperCase() : '?'}
               </div>
             )}
           </div>
-          <p><strong>Name:</strong> {user.name}</p>
-          <p><strong>Email:</strong> {user.email}</p>
-          <p><strong>Role:</strong> {user.role}</p>
 
-          <div className="d-grid">
-            <Button
-              variant="primary"
-              onClick={() => navigate('edit')}
-            >
+          <Row className="mb-3">
+            <Col sm={3} className="fw-bold">Name:</Col>
+            <Col>{user.name}</Col>
+          </Row>
+          
+          <Row className="mb-3">
+            <Col sm={3} className="fw-bold">Email:</Col>
+            <Col>{user.email}</Col>
+          </Row>
+          
+          <Row className="mb-3">
+            <Col sm={3} className="fw-bold">Role:</Col>
+            <Col>{user.role}</Col>
+          </Row>
+
+          <div className="d-grid mt-4">
+            <Link to="/profile/edit" className="btn btn-primary d-block">
               Edit Profile
-            </Button>
+            </Link>
           </div>
         </Card.Body>
       </Card>

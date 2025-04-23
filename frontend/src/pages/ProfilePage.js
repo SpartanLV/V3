@@ -1,13 +1,18 @@
 // src/pages/ProfilePage.js
-import React from 'react';
-import ProfileManagement from '../components/ProfileManagement';
+import React, { useEffect } from 'react';
+import { Container } from 'react-bootstrap';
+import ProfileView from './ProfileView';
 
 function ProfilePage() {
+  useEffect(() => {
+    document.title = "Your Profile | University System";
+  }, []);
+
   return (
-    <div className="profile-page-container">
-      <h1>Your Profile</h1>
-      <ProfileManagement />
-    </div>
+    <Container className="profile-page-container">
+      <h1 className="mb-4">Your Profile</h1>
+      <ProfileView />
+    </Container>
   );
 }
 

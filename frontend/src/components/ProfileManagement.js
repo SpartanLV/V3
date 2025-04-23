@@ -12,7 +12,7 @@ import {
   Spinner
 } from 'react-bootstrap';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import './styling.css';
 
@@ -34,7 +34,7 @@ export default function ProfileManagement() {
 
   // 2) Fetch profile once
   useEffect(() => {
-    (async () => {
+    const fetchProfile = async () => {
       const token = localStorage.getItem('token');
       if (!token) {
         navigate('/login');
@@ -58,7 +58,9 @@ export default function ProfileManagement() {
       } finally {
         setLoading(false);
       }
-    })();
+    };
+    
+    fetchProfile();
   }, [navigate]);
 
   // 3) Handlers
@@ -68,6 +70,21 @@ export default function ProfileManagement() {
   const handleFileChange = e => {
     const file = e.target.files[0];
     if (!file) return;
+    
+    // Add file validation
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      setError('Image file size should not exceed 5MB');
+      return;
+    }
+    
+    // Check file type
+    if (!file.type.match('image.*')) {
+      setError('Please select an image file');
+      return;
+    }
+    
+    setError(''); // Clear any previous errors
     setFormData(f => ({ ...f, profilePicture: file }));
     const reader = new FileReader();
     reader.onloadend = () => setPreviewImage(reader.result);
@@ -97,12 +114,20 @@ export default function ProfileManagement() {
 
       setSuccess('Profile updated!');
       await refreshUser();
-      navigate(`/${data.role}/profile`);
+      setTimeout(() => {
+        navigate('/profile');
+      }, 1000);
     } catch (err) {
       console.error('Update error:', err);
       setError(err.response?.data?.error || 'Update failed');
-      setLoading(false);
+    } finally {
+      setLoading(false); // Always reset loading state
     }
+  };
+
+  const handleCancel = (e) => {
+    e.preventDefault();
+    navigate('/profile');
   };
 
   // 4) Single return: spinner if loading, otherwise form
@@ -150,7 +175,7 @@ export default function ProfileManagement() {
                           hidden
                         />
                       </Form.Label>
-                      </Form.Group>
+                    </Form.Group>
                   </Col>
                 </Row>
 
@@ -162,7 +187,12 @@ export default function ProfileManagement() {
                     value={formData.name}
                     onChange={handleChange}
                     required
+                    minLength="2"
+                    maxLength="50"
                   />
+                  <Form.Text className="text-muted">
+                    Name must be between 2 and 50 characters.
+                  </Form.Text>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
@@ -178,10 +208,21 @@ export default function ProfileManagement() {
                   </Form.Text>
                 </Form.Group>
 
-                <div className="d-grid gap-2">
-                  <Button variant="primary" type="submit" disabled={loading}>
+                <div className="d-flex gap-2 mt-4">
+                  <Button 
+                    variant="primary" 
+                    type="submit" 
+                    className="flex-grow-1"
+                    disabled={loading}
+                  >
                     {loading ? 'Updating…' : 'Update Profile'}
                   </Button>
+                  <Link 
+                    to="/profile" 
+                    className="btn btn-secondary flex-grow-1"
+                  >
+                    Cancel
+                  </Link>
                 </div>
               </Form>
             </Card.Body>
