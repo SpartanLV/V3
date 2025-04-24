@@ -31,6 +31,7 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="navbar-container">
         <a href={dashboardPath} className="navbar-brand">{brandLabel}</a>
+
         <div className="navbar-right">
           {user ? (
             <>

@@ -6,7 +6,7 @@ const { createServer } = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const path = require('path');
-
+const productRoutes = require('./routes/products');
 const app = express();
 const httpServer = createServer(app);
 
@@ -42,6 +42,7 @@ io.on('connection', (socket) => {
 app.set('io', io);
 
 // Routes
+app.use('/api/products', productRoutes);
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/admin', require('./middleware/auth'), require('./middleware/roleCheck')('admin'), require('./routes/adminRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));

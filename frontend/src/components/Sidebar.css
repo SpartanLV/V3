@@ -1,0 +1,81 @@
+/* src/components/Sidebar.css */
+
+/* General sidebar link styles */
+.sidebar-link {
+    color: #333;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.sidebar-link:hover,
+.sidebar-link:focus,
+.nav-link.active {
+    background-color: #e6f0ff;
+    color: #0056b3;
+}
+
+/* Remove blue underline */
+.sidebar-link:focus,
+.sidebar-sublink:focus {
+    box-shadow: none !important;
+}
+
+/* Accordion customization */
+.sidebar-accordion .accordion-item-custom {
+    border: none;
+    background-color: transparent;
+}
+
+.accordion-header-custom {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+    background-color: transparent;
+    padding: 0;
+}
+
+.accordion-button {
+    background-color: transparent !important;
+    color: #333 !important;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 6px;
+    box-shadow: none !important;
+    text-decoration: none;
+    border: none;
+}
+
+.accordion-button::after {
+    margin-left: auto;
+    filter: grayscale(1) contrast(1.2);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #e6f0ff !important;
+    color: #0056b3 !important;
+}
+
+.accordion-body-custom {
+    padding-left: 12px;
+    padding-top: 4px;
+}
+
+/* Sublinks inside accordion */
+.sidebar-sublink {
+    display: block;
+    padding: 6px 12px;
+    font-size: 0.95rem;
+    color: #444;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+    border-radius: 4px;
+}
+
+.sidebar-sublink:hover {
+    background-color: #f0f8ff;
+    color: #003366;
+}

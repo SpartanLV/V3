@@ -41,7 +41,7 @@ export default function ProfileView() {
       </Container>
     );
   }
-  
+
   if (error) {
     return (
       <Container className="mt-5">
@@ -56,17 +56,17 @@ export default function ProfileView() {
         <Card.Header as="h4">Profile Information</Card.Header>
         <Card.Body>
           <div className="text-center mb-3">
-          {user.profilePictureUrl ? (
-            <img
-              src={user.profilePictureUrl}
-              alt="Profile"
-              style={{
-                width: '120px',
-                height: '120px',
-                borderRadius: '50%',
-                objectFit: 'cover'
-              }}
-            />
+            {user.profilePictureUrl ? (
+              <img
+                src={user.profilePictureUrl}
+                alt="Profile"
+                style={{
+                  width: '120px',
+                  height: '120px',
+                  borderRadius: '50%',
+                  objectFit: 'cover'
+                }}
+              />
             ) : (
               <div
                 style={{
@@ -88,19 +88,19 @@ export default function ProfileView() {
             <Col sm={3} className="fw-bold">Name:</Col>
             <Col>{user.name}</Col>
           </Row>
-          
+
           <Row className="mb-3">
             <Col sm={3} className="fw-bold">Email:</Col>
             <Col>{user.email}</Col>
           </Row>
-          
+
           <Row className="mb-3">
             <Col sm={3} className="fw-bold">Role:</Col>
             <Col>{user.role}</Col>
           </Row>
 
           <div className="d-grid mt-4">
-            <Link to="/profile/edit" className="btn btn-primary d-block">
+            <Link to={`/${user.role}/profile/edit`} className="btn btn-primary d-block">
               Edit Profile
             </Link>
           </div>
