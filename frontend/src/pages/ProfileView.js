@@ -100,7 +100,7 @@ export default function ProfileView() {
           </Row>
 
           <div className="d-grid mt-4">
-            <Link to="/profile/edit" className="btn btn-primary d-block">
+            <Link to={`/${user.role}/profile/edit`} className="btn btn-primary d-block">
               Edit Profile
             </Link>
           </div>
