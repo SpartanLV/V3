@@ -25,6 +25,9 @@ import ProfileView from './pages/ProfileView';
 import ProfileEdit from './pages/ProfileEdit';
 import PaymentPage from './components/payment'; // Add this import
 
+import Messages from './pages/Messages'; // Import Messages page
+import ChatBox from './components/ChatBox'; // Import ChatBox component
+
 function App() {
   const { user, loading } = useContext(AuthContext);
 
@@ -53,10 +56,30 @@ function App() {
             <Route path="/register" element={user ? <Navigate to={getDefaultRedirect()} /> : <Register />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/payment" element={<PaymentPage />} /> {/* Public payment route */}
+            <Route path="/messages" element={<Messages />} /> {/* Messages route */}
+            <Route path="/chat/:recipientId" element={<ChatBox />} /> {/* ChatBox route */}
+
+            {/* Protected Routes */}
             {/* Admin Routes */}
             <Route
               path="/admin/users"
               element={<ProtectedRoute allowedRoles={['admin']}><ManageUsers /></ProtectedRoute>}
+            />
+            <Route
+              path="/admin/courses"
+              element={<ProtectedRoute allowedRoles={['admin']}><ManageCourses /></ProtectedRoute>}
+            />
+            <Route
+              path="/admin/bookings"
+              element={<ProtectedRoute allowedRoles={['admin']}><ManageBookings /></ProtectedRoute>}
+            />
+            <Route
+              path="/admin/notifications"
+              element={<ProtectedRoute allowedRoles={['admin']}><SendNotification /></ProtectedRoute>}
+            />
+            <Route
+              path="/admin/reports"
+              element={<ProtectedRoute allowedRoles={['admin']}><Reports /></ProtectedRoute>}
             />
             {/* ... other admin routes ... */}
 

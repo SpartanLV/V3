@@ -19,7 +19,7 @@ exports.generateReport = async (req, res) => {
       case 'bookings':
         data = await Booking.find()
           .populate('user', 'name email')
-          .populate('facility')
+          //.populate('facility')
           .sort({ startTime: -1 })
           .lean();
         break;
@@ -34,13 +34,15 @@ exports.generateReport = async (req, res) => {
     if (format === 'csv') {
       try {
         const opts = {
-          fields: Object.keys(data[0]).filter(key => !key.includes('_id') && !key.includes('password')),
-          unwind: ['sessions']
+          fields: Object.keys(data[0]).filter(
+            key => key !== '__v' && key !== 'password'
+          ),
+          flatten: true,
+          flattenSeparator: '.',
         };
-        
         const parser = new Parser(opts);
         const csv = parser.parse(data);
-
+    
         res.header('Content-Type', 'text/csv');
         res.attachment(`${type}_report_${new Date().toISOString().split('T')[0]}.csv`);
         return res.send(csv);
@@ -49,6 +51,7 @@ exports.generateReport = async (req, res) => {
         return res.status(500).json({ error: 'CSV conversion failed' });
       }
     }
+    
 
     res.json({
       success: true,

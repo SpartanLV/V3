@@ -37,7 +37,4 @@ router.put(
   updateUserProfile
 );
 
-// Admin: get all users
-router.get('/users', auth, roleCheck('admin'), getUsers);
-
 module.exports = router;

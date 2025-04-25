@@ -18,18 +18,21 @@ export default function Sidebar() {
       { path: '/admin/bookings', label: 'Bookings' },
       { path: '/admin/notifications', label: 'Send Notification' },
       { path: '/admin/reports', label: 'Reports' },
+      { path: '/messages', label: 'Messages', icon: '✉️' }, // Added Messages link
     ];
   } else if (user?.role === 'faculty') {
     links = [
       { path: '/faculty/dashboard', label: 'Dashboard' },
       { path: '/faculty/profile', label: 'Profile' },
-      { path: '/payment', label: 'Make Payment', icon: '💳' }, // Added payment link for faculty
+      { path: '/payment', label: 'Make Payment', icon: '💳' },
+      { path: '/messages', label: 'Messages', icon: '✉️' }, // Added Messages link
     ];
   } else if (user?.role === 'student') {
     links = [
       { path: '/student/dashboard', label: 'Dashboard' },
       { path: '/student/profile', label: 'Profile' },
-      { path: '/payment', label: 'Make Payment', icon: '💳' }, // Added payment link for students
+      { path: '/payment', label: 'Make Payment', icon: '💳' },
+      { path: '/messages', label: 'Messages', icon: '✉️' }, // Added Messages link
     ];
   }
 
