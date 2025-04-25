@@ -18,7 +18,8 @@ export default function Sidebar() {
       { path: '/admin/bookings', label: 'Bookings' },
       { path: '/admin/notifications', label: 'Send Notification' },
       { path: '/admin/reports', label: 'Reports' },
-      { path: '/messages', label: 'Messages', icon: '✉️' }, // Added Messages link
+      { path: '/messages', label: 'Messages', icon: '✉️' }, 
+      { path: '/chat/:recipientId', label: 'Chat', icon: '💬' }, // Added Chat link
     ];
   } else if (user?.role === 'faculty') {
     links = [
@@ -33,6 +34,7 @@ export default function Sidebar() {
       { path: '/student/profile', label: 'Profile' },
       { path: '/payment', label: 'Make Payment', icon: '💳' },
       { path: '/messages', label: 'Messages', icon: '✉️' }, // Added Messages link
+      { path: '/chat/:recipientId', label: 'Chat', icon: '💬' }, // Added Chat link
     ];
   }
 
