@@ -1,6 +1,6 @@
 // frontend/src/pages/Messages.js
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { jwtDecode } from 'jwt-decode';
 import ChatBox from '../components/ChatBox';
 
@@ -15,13 +15,13 @@ const Messages = () => {
       if (!token) return;
 
       const decoded = jwtDecode(token);
-      setCurrentUserId(decoded.id);
+      console.log('Messages.js -> decoded JWT payload:', decoded);
+      setCurrentUserId(decoded.Id);
 
       try {
-        const res = await axios.get('/api/users', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const filtered = res.data.filter(user => user._id !== decoded.id);
+        const res = await api.get('/users');
+        console.log('Messages.js -> fetched users:', res.data);
+        const filtered = res.data.filter(user => user._id !== decoded.Id);
         setUsers(filtered);
       } catch (err) {
         console.error('Error fetching users:', err);
@@ -63,7 +63,9 @@ const Messages = () => {
         {selectedUser ? (
           <>
             <h4>Chatting with {selectedUser.name || selectedUser.email}</h4>
-            <ChatBox recipient={selectedUser} />
+            <ChatBox
+            recipient={selectedUser}
+            currentUserId = {currentUserId}/>
           </>
         ) : (
           <p>Select a user to start chatting</p>

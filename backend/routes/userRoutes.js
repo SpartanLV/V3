@@ -26,6 +26,11 @@ router.get('/test', (req, res) => {
   res.send('✅ userRoutes are working');
 });
 
+router.get(
+  '/',
+  auth,
+  getUsers
+);
 // View own profile
 router.get('/profile', auth, viewUserProfile);
 

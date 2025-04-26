@@ -110,7 +110,7 @@ app.use(
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/users',         userRoutes);
 app.use('/api/messages',      messageRoutes);
-
+app.use('api/users', userRoutes);
 console.log('User routes mounted at /api/users, messages at /api/messages');
 
 const PORT = process.env.PORT || 5000;

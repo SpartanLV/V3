@@ -7,67 +7,73 @@ import {
   sendMessageWS,
   disconnectSocket,
 } from '../services/socket';
-import axios from 'axios';
+import api from '../services/api';
 
-const ChatBox = ({ recipient }) => {
+const ChatBox = ({ recipient, currentUserId }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const bottomRef = useRef(null);
 
-  // Scroll to the bottom
+  // Scroll to the bottom whenever messages change
   const scrollToBottom = () => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
+    // Early bail if we lack either ID
+    if (!recipient?._id || !currentUserId) {
+      console.warn('ChatBox: missing recipient or current user ID');
+      return;
+    }
+
+    // 1) Load existing messages
     const fetchMessages = async () => {
       try {
-        const token = localStorage.getItem('jwt');
-        const res = await axios.get('/api/messages', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const filtered = res.data.filter(
-          (msg) =>
-            (msg.sender === recipient._id || msg.recipient === recipient._id)
+        const res = await api.get('/messages');
+        const twoWay = res.data.filter(msg =>
+          (msg.sender === currentUserId && msg.recipient === recipient._id) ||
+          (msg.sender === recipient._id && msg.recipient === currentUserId)
         );
-        setMessages(filtered);
+        setMessages(twoWay);
+        scrollToBottom();
       } catch (err) {
         console.error('Error loading messages:', err);
       }
     };
 
     fetchMessages();
-    const socket = setupSocket();
 
-    // Listen for incoming messages
-    subscribeToMessages((msg) => {
+    // 2) Setup socket listeners
+    setupSocket();
+    const handler = (msg) => {
+      // only append if this message is between us
       if (
-        msg.sender === recipient._id ||
-        msg.recipient === recipient._id
+        (msg.sender === currentUserId && msg.recipient === recipient._id) ||
+        (msg.sender === recipient._id && msg.recipient === currentUserId)
       ) {
-        setMessages((prev) => [...prev, msg]);
+        setMessages(prev => [...prev, msg]);
         scrollToBottom();
       }
-    });
+    };
+    subscribeToMessages(handler);
+    subscribeToMessageSent(handler);
 
-    subscribeToMessageSent((msg) => {
-      if (
-        msg.sender === recipient._id ||
-        msg.recipient === recipient._id
-      ) {
-        setMessages((prev) => [...prev, msg]);
-        scrollToBottom();
-      }
-    });
-
+    // 3) Cleanup on unmount or recipient change
     return () => {
       disconnectSocket();
+      setMessages([]);  // reset chat window
     };
-  }, [recipient]);
+
+  }, [recipient, currentUserId]);
 
   const handleSend = (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    // Guard again before sending
+    if (!input.trim() || !recipient?._id || !currentUserId) {
+      console.warn('ChatBox: missing recipient or current user ID');
+      return;
+    }
+    // send over WebSocket (server will tag sender via token)
     sendMessageWS(recipient._id, input.trim());
     setInput('');
   };
@@ -79,13 +85,13 @@ const ChatBox = ({ recipient }) => {
           <div
             key={msg._id}
             style={{
-              textAlign: msg.sender === recipient._id ? 'left' : 'right',
+              textAlign: msg.sender === currentUserId ? 'right' : 'left',
               marginBottom: 4,
             }}
           >
             <span
               style={{
-                background: msg.sender === recipient._id ? '#eee' : '#b3d4fc',
+                background: msg.sender === currentUserId ? '#b3d4fc' : '#eee',
                 padding: '6px 10px',
                 borderRadius: 12,
                 display: 'inline-block',
@@ -115,7 +121,15 @@ const ChatBox = ({ recipient }) => {
             fontSize: '14px',
           }}
         />
-        <button type="submit" style={{ padding: '8px 12px', border: '1px solid #ccc', borderRadius: '4px', cursor: 'pointer' }}>
+        <button
+          type="submit"
+          style={{
+            padding: '8px 12px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
+        >
           Send
         </button>
       </form>
