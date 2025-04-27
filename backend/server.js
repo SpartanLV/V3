@@ -15,6 +15,8 @@ const adminRoutes        = require('./routes/adminRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const userRoutes         = require('./routes/userRoutes');
 const messageRoutes      = require('./routes/messageRoutes');
+const enrollmentRoutes   = require('./routes/enrollmentRoutes');
+const reviewRoutes       = require('./routes/reviewRoutes');  
 
 const app = express();
 const httpServer = createServer(app);
@@ -112,6 +114,8 @@ app.use('/api/users',         userRoutes);
 app.use('/api/messages',      messageRoutes);
 app.use('api/users', userRoutes);
 console.log('User routes mounted at /api/users, messages at /api/messages');
+app.use('/api/enrollments',  enrollmentRoutes);
+app.use('/api/reviews',      reviewRoutes);
 
 const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, () => {
