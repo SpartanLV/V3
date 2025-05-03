@@ -18,6 +18,8 @@ const messageRoutes = require('./routes/messageRoutes');
 const enrollmentRoutes = require('./routes/enrollmentRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const courseRoutes = require('./routes/courseRoutes');
+const progressRoutes = require('./routes/progressRoutes');
+const gradeRoutes = require('./routes/gradeRoutes');
 
 const app = express();
 const httpServer = createServer(app);
@@ -118,6 +120,8 @@ console.log('User routes mounted at /api/users, messages at /api/messages');
 app.use('/api/enrollments', enrollmentRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/courses', courseRoutes);
+app.use('/api/progress', progressRoutes);
+app.use('/api/grades', gradeRoutes);
 
 const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, () => {

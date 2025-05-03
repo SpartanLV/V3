@@ -4,6 +4,19 @@ import './styling.css';
 
 const ManageBookings = () => {
   const [bookings, setBookings] = useState([]);
+  const sampleMaterials = [{ title: 'Introduction', content: 'Welcome to the course!' },
+    { title: 'Chapter 1', content: 'This is the first chapter.' },
+    { title: 'Chapter 2', content: 'This is the second chapter.' },
+    { title: 'Chapter 3', content: 'This is the third chapter.' },
+    { title: 'Chapter 4', content: 'This is the fourth chapter.' },
+    { title: 'Chapter 5', content: 'This is the fifth chapter.' }];
+  const sampleAssignments = [{ title: 'Assignment 1', description: 'This is the first assignment.' },
+    { title: 'Assignment 2', description: 'This is the second assignment.' },
+    { title: 'Assignment 3', description: 'This is the third assignment.' },
+    { title: 'Assignment 4', description: 'This is the fourth assignment.' },
+    { title: 'Assignment 5', description: 'This is the fifth assignment.' }
+  ];
+
 
   useEffect(() => {
     const fetchBookings = async () => {
