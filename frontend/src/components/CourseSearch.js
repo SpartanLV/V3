@@ -58,10 +58,21 @@ const CourseSearch = () => {
                 <ul className="course-list">
                     {courses.map((course) => (
                         <li key={course._id} className="course-item">
-                            <strong>{course.title}</strong> {course.description ? course.description : 'No description available'}
+                            <strong>{course.title}</strong>{course.description || 'No description available'}
+                            {course.materials && course.materials.length > 0 && (
+                                <ul className="material-list">
+                                    {course.materials.map((material, index) => (
+                                        <li key={index} className="material-item">
+                                            <span className="material-type">{material.type.toUpperCase()}:</span>{' '}
+                                            <a href={material.link} target="_blank" rel="noopener noreferrer">{material.title}</a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </li>
                     ))}
                 </ul>
+
             )}
         </div>
     );

@@ -19,7 +19,7 @@ export default function Sidebar() {
       { path: '/admin/reports', label: 'Reports' },
       { path: '/messages', label: 'Messages', icon: '✉️' },
       { path: '/chat/:recipientId', label: 'Chat', icon: '💬' },
-      { path: '/courses', label: 'Browse Courses', icon: '📚' }, // Added Browse Courses link
+      { path: '/courses', label: 'Browse Courses', icon: '🔍' }, // Custom icon for Browse Courses
     ];
   } else if (user?.role === 'faculty') {
     links = [
@@ -28,7 +28,7 @@ export default function Sidebar() {
       { path: '/payment', label: 'Make Payment', icon: '💳' },
       { path: '/messages', label: 'Messages', icon: '✉️' },
       { path: '/chat/:recipientId', label: 'Chat', icon: '💬' },
-      { path: '/courses', label: 'Browse Courses', icon: '📚' }, // Added Browse Courses link
+      { path: '/courses', label: 'Browse Courses', icon: '🔍' }, // Custom icon for Browse Courses
     ];
   } else if (user?.role === 'student') {
     links = [
@@ -37,7 +37,7 @@ export default function Sidebar() {
       { path: '/payment', label: 'Make Payment', icon: '💳' },
       { path: '/messages', label: 'Messages', icon: '✉️' },
       { path: '/chat/:recipientId', label: 'Chat', icon: '💬' },
-      { path: '/courses', label: 'Browse Courses', icon: '📚' }, // Added Browse Courses link
+      { path: '/courses', label: 'Browse Courses', icon: '🔍' }, // Custom icon for Browse Courses
     ];
   }
 

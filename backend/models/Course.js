@@ -6,7 +6,14 @@ const CourseSchema = new mongoose.Schema({
   description: String,
   credits: { type: Number, default: 3 },
   faculty: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  status: { type: String, enum: ['active', 'archived'], default: 'active' }
+  status: { type: String, enum: ['active', 'archived'], default: 'active' },
+  materials: [
+    {
+      title: { type: String, required: true },
+      link: { type: String, required: true },
+      type: { type: String, enum: ['pdf', 'video', 'link'], default: 'pdf' }
+    }
+  ]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Course', CourseSchema);

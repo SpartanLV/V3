@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import api from '../services/api'; // Axios setup
-import './styling.css'; // Import the CSS file
+import api from '../services/api';
+import './styling.css';
 
 const ManageCourses = ({ mode }) => {
   const [courses, setCourses] = useState([]);
   const [facultyList, setFacultyList] = useState([]);
+  const [materials, setMaterials] = useState([{ title: '', link: '', type: 'pdf' }]);
+
   const [newCourse, setNewCourse] = useState({
     title: '', code: '', description: '', credits: 3, faculty: ''
   });
+
   const [editData, setEditData] = useState({
     title: '', code: '', description: '', credits: 3, faculty: ''
   });
@@ -37,6 +40,7 @@ const ManageCourses = ({ mode }) => {
     try {
       const res = await api.get(`/admin/courses/${id}`);
       setEditData(res.data);
+      setMaterials(res.data.materials || []);
     } catch (err) {
       console.error('Failed to fetch course:', err);
     }
@@ -52,12 +56,29 @@ const ManageCourses = ({ mode }) => {
     }
   };
 
+  const handleMaterialChange = (index, field, value) => {
+    const updated = [...materials];
+    updated[index][field] = value;
+    setMaterials(updated);
+  };
+
+  const addMaterial = () => {
+    setMaterials([...materials, { title: '', link: '', type: 'pdf' }]);
+  };
+
+  const removeMaterial = (index) => {
+    const updated = [...materials];
+    updated.splice(index, 1);
+    setMaterials(updated);
+  };
+
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      const courseToAdd = { ...newCourse, faculty: newCourse.faculty };
+      const courseToAdd = { ...newCourse, faculty: newCourse.faculty, materials };
       await api.post('/admin/courses', courseToAdd);
       setNewCourse({ title: '', code: '', description: '', credits: 3, faculty: '' });
+      setMaterials([{ title: '', link: '', type: 'pdf' }]);
       fetchCourses();
       navigate('/admin/courses');
     } catch (err) {
@@ -68,9 +89,10 @@ const ManageCourses = ({ mode }) => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const courseToUpdate = { ...editData, faculty: editData.faculty };
+      const courseToUpdate = { ...editData, faculty: editData.faculty, materials };
       await api.put(`/admin/courses/${courseId}`, courseToUpdate);
       setEditData({ title: '', code: '', description: '', credits: 3, faculty: '' });
+      setMaterials([{ title: '', link: '', type: 'pdf' }]);
       navigate('/admin/courses');
     } catch (err) {
       console.error('Failed to update course:', err.response?.data || err.message);
@@ -95,44 +117,81 @@ const ManageCourses = ({ mode }) => {
     </select>
   );
 
+  const renderMaterialInputs = () => (
+    <div>
+      <h4>Course Materials</h4>
+      {materials.map((mat, index) => (
+        <div key={index} className="material-row">
+          <input
+            placeholder="Title"
+            value={mat.title}
+            onChange={(e) => handleMaterialChange(index, 'title', e.target.value)}
+            required
+          />
+          <input
+            placeholder="Link (URL)"
+            value={mat.link}
+            onChange={(e) => handleMaterialChange(index, 'link', e.target.value)}
+            required
+          />
+          <select
+            value={mat.type}
+            onChange={(e) => handleMaterialChange(index, 'type', e.target.value)}
+          >
+            <option value="pdf">PDF</option>
+            <option value="video">Video</option>
+            <option value="link">Link</option>
+          </select>
+          <button type="button" onClick={() => removeMaterial(index)}>Remove</button>
+        </div>
+      ))}
+      <button type="button" onClick={addMaterial}>Add Material</button>
+    </div>
+  );
+
+  const formFields = (data, setData, onSubmit) => (
+    <form onSubmit={onSubmit} className="course-form">
+      <input
+        required
+        value={data.title}
+        onChange={(e) => setData({ ...data, title: e.target.value })}
+        placeholder="Course Title"
+        className="form-input"
+      />
+      <input
+        required
+        value={data.code}
+        onChange={(e) => setData({ ...data, code: e.target.value })}
+        placeholder="Course Code"
+        className="form-input"
+      />
+      <textarea
+        value={data.description}
+        onChange={(e) => setData({ ...data, description: e.target.value })}
+        placeholder="Course Description"
+        className="form-textarea"
+      />
+      <input
+        type="number"
+        value={data.credits}
+        onChange={(e) => setData({ ...data, credits: parseInt(e.target.value) })}
+        placeholder="Credits"
+        className="form-input"
+      />
+      {facultySelect(data.faculty, (e) => setData({ ...data, faculty: e.target.value }))}
+      {renderMaterialInputs()}
+      <div className="form-actions">
+        <button type="submit" className="btn btn-add">Save</button>
+        <button type="button" className="btn btn-cancel" onClick={() => navigate('/admin/courses')}>Cancel</button>
+      </div>
+    </form>
+  );
+
   if (mode === 'add') {
     return (
       <div className="manage-courses-container">
         <h2>Add New Course</h2>
-        <form onSubmit={handleAdd} className="course-form">
-          <input
-            required
-            value={newCourse.title}
-            onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })}
-            placeholder="Course Title"
-            className="form-input"
-          />
-          <input
-            required
-            value={newCourse.code}
-            onChange={(e) => setNewCourse({ ...newCourse, code: e.target.value })}
-            placeholder="Course Code"
-            className="form-input"
-          />
-          <textarea
-            value={newCourse.description}
-            onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })}
-            placeholder="Course Description"
-            className="form-textarea"
-          />
-          <input
-            type="number"
-            value={newCourse.credits}
-            onChange={(e) => setNewCourse({ ...newCourse, credits: parseInt(e.target.value) })}
-            placeholder="Credits"
-            className="form-input"
-          />
-          {facultySelect(newCourse.faculty, (e) => setNewCourse({ ...newCourse, faculty: e.target.value }))}
-          <div className="form-actions">
-            <button type="submit" className="btn btn-add">Add Course</button>
-            <button type="button" className="btn btn-cancel" onClick={() => navigate('/admin/courses')}>Cancel</button>
-          </div>
-        </form>
+        {formFields(newCourse, setNewCourse, handleAdd)}
       </div>
     );
   }
@@ -141,40 +200,7 @@ const ManageCourses = ({ mode }) => {
     return (
       <div className="manage-courses-container">
         <h2>Edit Course</h2>
-        <form onSubmit={handleUpdate} className="course-form">
-          <input
-            required
-            value={editData.title}
-            onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-            placeholder="Course Title"
-            className="form-input"
-          />
-          <input
-            required
-            value={editData.code}
-            onChange={(e) => setEditData({ ...editData, code: e.target.value })}
-            placeholder="Course Code"
-            className="form-input"
-          />
-          <textarea
-            value={editData.description}
-            onChange={(e) => setEditData({ ...editData, description: e.target.value })}
-            placeholder="Course Description"
-            className="form-textarea"
-          />
-          <input
-            type="number"
-            value={editData.credits}
-            onChange={(e) => setEditData({ ...editData, credits: parseInt(e.target.value) })}
-            placeholder="Credits"
-            className="form-input"
-          />
-          {facultySelect(editData.faculty, (e) => setEditData({ ...editData, faculty: e.target.value }))}
-          <div className="form-actions">
-            <button type="submit" className="btn btn-update">Update Course</button>
-            <button type="button" className="btn btn-cancel" onClick={() => navigate('/admin/courses')}>Cancel</button>
-          </div>
-        </form>
+        {formFields(editData, setEditData, handleUpdate)}
       </div>
     );
   }
@@ -189,7 +215,7 @@ const ManageCourses = ({ mode }) => {
             <div className="course-details">
               <strong>{course.title}</strong> ({course.code}) - {course.description}
               <br />
-              <span>Faculty: {course.faculty.name}</span>
+              <span>Faculty: {course.faculty?.name || 'N/A'}</span>
             </div>
             <div className="course-actions">
               <button onClick={() => navigate(`/admin/courses/edit/${course._id}`)} className="btn btn-edit">Edit</button>
