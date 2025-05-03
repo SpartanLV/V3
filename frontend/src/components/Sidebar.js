@@ -37,11 +37,7 @@ export default function Sidebar() {
       { path: '/payment', label: 'Make Payment', icon: '💳' },
       { path: '/messages', label: 'Messages', icon: '✉️' },
       { path: '/chat/:recipientId', label: 'Chat', icon: '💬' },
-<<<<<<< HEAD
-      { path: '/courses', label: 'Browse Courses', icon: '🔍' }, // Custom icon for Browse Courses
-=======
       { path: '/student/courses', label: 'My Courses', icon: '📖' } ,
->>>>>>> deba7e41d86b99d3455053514d4fd707c17d31d2
     ];
   }
 
