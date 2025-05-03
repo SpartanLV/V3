@@ -1,10 +1,14 @@
+// backend/routes/reviewRoutes.js
 const express = require('express');
-const router = express.Router();
-const ctrl = require('../controllers/reviewController');
-const auth = require('../middleware/auth');
+const router  = express.Router();
+const auth    = require('../middleware/auth');
+const ctrl    = require('../controllers/reviewController');
 
-router.post('/', auth, ctrl.submitReview);
-router.get('/course/:courseId', ctrl.getCourseReviews);
-router.get('/me', auth, ctrl.getMyReviews);
+// POST   /api/reviews           submitReview
+// GET    /api/reviews/course/:courseId  getCourseReviews
+// GET    /api/reviews/me        getMyReviews
+router.post('/',              auth, ctrl.submitReview);
+router.get('/course/:courseId', /* you can opt to protect this too: auth, */ ctrl.getCourseReviews);
+router.get('/me',             auth, ctrl.getMyReviews);
 
 module.exports = router;
