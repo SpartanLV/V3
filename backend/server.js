@@ -9,14 +9,15 @@ const cors = require('cors');
 const path = require('path');
 
 // Route imports
-const productRoutes      = require('./routes/products');
-const authRoutes         = require('./routes/authRoutes');
-const adminRoutes        = require('./routes/adminRoutes');
+const productRoutes = require('./routes/products');
+const authRoutes = require('./routes/authRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
-const userRoutes         = require('./routes/userRoutes');
-const messageRoutes      = require('./routes/messageRoutes');
-const enrollmentRoutes   = require('./routes/enrollmentRoutes');
-const reviewRoutes       = require('./routes/reviewRoutes');  
+const userRoutes = require('./routes/userRoutes');
+const messageRoutes = require('./routes/messageRoutes');
+const enrollmentRoutes = require('./routes/enrollmentRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
+const courseRoutes = require('./routes/courseRoutes');
 
 const app = express();
 const httpServer = createServer(app);
@@ -33,9 +34,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/admin-module', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
@@ -80,7 +81,7 @@ io.on('connection', (socket) => {
       // 1) Persist message
       const Message = require('./models/Message');
       const msg = await Message.create({
-        sender:    socket.userId,
+        sender: socket.userId,
         recipient: recipientId,
         body
       });
@@ -101,8 +102,8 @@ io.on('connection', (socket) => {
 app.set('io', io);
 
 // === ROUTES MOUNTING ===
-app.use('/api/products',      productRoutes);
-app.use('/api/auth',          authRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/auth', authRoutes);
 app.use(
   '/api/admin',
   require('./middleware/auth'),
@@ -110,12 +111,13 @@ app.use(
   adminRoutes
 );
 app.use('/api/notifications', notificationRoutes);
-app.use('/api/users',         userRoutes);
-app.use('/api/messages',      messageRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/messages', messageRoutes);
 app.use('api/users', userRoutes);
 console.log('User routes mounted at /api/users, messages at /api/messages');
-app.use('/api/enrollments',  enrollmentRoutes);
-app.use('/api/reviews',      reviewRoutes);
+app.use('/api/enrollments', enrollmentRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/courses', courseRoutes);
 
 const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, () => {

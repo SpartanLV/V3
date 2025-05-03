@@ -1,4 +1,3 @@
-// src/components/Sidebar.js
 import React, { useContext } from 'react';
 import { Nav, Accordion } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
@@ -18,23 +17,27 @@ export default function Sidebar() {
       { path: '/admin/bookings', label: 'Bookings' },
       { path: '/admin/notifications', label: 'Send Notification' },
       { path: '/admin/reports', label: 'Reports' },
-      { path: '/messages', label: 'Messages', icon: '✉️' }, 
-      { path: '/chat/:recipientId', label: 'Chat', icon: '💬' }, // Added Chat link
+      { path: '/messages', label: 'Messages', icon: '✉️' },
+      { path: '/chat/:recipientId', label: 'Chat', icon: '💬' },
+      { path: '/courses', label: 'Browse Courses', icon: '📚' }, // Added Browse Courses link
     ];
   } else if (user?.role === 'faculty') {
     links = [
       { path: '/faculty/dashboard', label: 'Dashboard' },
       { path: '/faculty/profile', label: 'Profile' },
       { path: '/payment', label: 'Make Payment', icon: '💳' },
-      { path: '/messages', label: 'Messages', icon: '✉️' }, // Added Messages link
+      { path: '/messages', label: 'Messages', icon: '✉️' },
+      { path: '/chat/:recipientId', label: 'Chat', icon: '💬' },
+      { path: '/courses', label: 'Browse Courses', icon: '📚' }, // Added Browse Courses link
     ];
   } else if (user?.role === 'student') {
     links = [
       { path: '/student/dashboard', label: 'Dashboard' },
       { path: '/student/profile', label: 'Profile' },
       { path: '/payment', label: 'Make Payment', icon: '💳' },
-      { path: '/messages', label: 'Messages', icon: '✉️' }, // Added Messages link
-      { path: '/chat/:recipientId', label: 'Chat', icon: '💬' }, // Added Chat link
+      { path: '/messages', label: 'Messages', icon: '✉️' },
+      { path: '/chat/:recipientId', label: 'Chat', icon: '💬' },
+      { path: '/courses', label: 'Browse Courses', icon: '📚' }, // Added Browse Courses link
     ];
   }
 

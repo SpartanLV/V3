@@ -1,0 +1,109 @@
+/* Soft container with a pastel background and gentle shadow */
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 2.5rem;
+    background: #fefefe;
+    border-radius: 20px;
+    box-shadow: 0 12px 36px rgba(255, 182, 193, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #f9dfe2;
+}
+
+/* Hover animation for container */
+.container:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 48px rgba(255, 182, 193, 0.3);
+}
+
+.heading {
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 2rem;
+    letter-spacing: -0.5px;
+}
+
+
+/* Search input centered */
+.search-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+/* Search input field */
+.search-input {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 1.15rem;
+    border-radius: 12px;
+    border: 2px solid #ffc8dd;
+    background: #fff0f6;
+    color: #444;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease;
+}
+
+/* Focused input style */
+.search-input:focus {
+    border-color: #ffafcc;
+    box-shadow: 0 0 10px #ffc8dd80;
+    outline: none;
+}
+
+/* Loading and empty message styles */
+.loading,
+.no-results {
+    text-align: center;
+    font-size: 1.3rem;
+    color: #aaa;
+    font-family: 'Poppins', sans-serif;
+    margin-top: 1rem;
+}
+
+/* Course list styles */
+.course-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Individual course card */
+.course-item {
+    margin-bottom: 20px;
+    padding: 24px;
+    background: #fff5f8;
+    border-radius: 16px;
+    border: 1px solid #ffe2e9;
+    box-shadow: 0 6px 20px rgba(255, 182, 193, 0.1);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Hover effect */
+.course-item:hover {
+    transform: translateY(-4px);
+    background-color: #ffe8f1;
+}
+
+/* Title styling */
+.course-item .title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #e63946;
+    font-family: 'Baloo 2', cursive;
+    letter-spacing: 0.5px;
+}
+
+/* Description styling */
+.course-item .description {
+    font-size: 1.05rem;
+    color: #555;
+    line-height: 1.6;
+    font-family: 'Poppins', sans-serif;
+    padding-left: 2px;
+}

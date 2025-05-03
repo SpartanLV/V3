@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import { AuthContext } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import CourseSearch from './components/CourseSearch';
 
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
@@ -58,6 +59,7 @@ function App() {
             <Route path="/payment" element={<PaymentPage />} /> {/* Public payment route */}
             <Route path="/messages" element={<Messages />} /> {/* Messages route */}
             <Route path="/chat/:recipientId" element={<ChatBox />} /> {/* ChatBox route */}
+            <Route path="/courses" element={<CourseSearch />} />
 
             {/* Protected Routes */}
             {/* Admin Routes */}
@@ -69,6 +71,11 @@ function App() {
               path="/admin/courses"
               element={<ProtectedRoute allowedRoles={['admin']}><ManageCourses /></ProtectedRoute>}
             />
+            <Route
+              path="/admin/courses/add"
+              element={<ProtectedRoute allowedRoles={['admin']}><ManageCourses mode="add" /></ProtectedRoute>}
+            />
+
             <Route
               path="/admin/bookings"
               element={<ProtectedRoute allowedRoles={['admin']}><ManageBookings /></ProtectedRoute>}
@@ -97,7 +104,7 @@ function App() {
               element={<ProtectedRoute allowedRoles={['student']}><ProfileEdit /></ProtectedRoute>}
             />
             {/* Add Payment Page route for students */}
-            
+
 
             {/* Faculty Routes */}
             <Route
