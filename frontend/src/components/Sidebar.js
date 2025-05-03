@@ -38,6 +38,7 @@ export default function Sidebar() {
       { path: '/messages', label: 'Messages', icon: '✉️' },
       { path: '/chat/:recipientId', label: 'Chat', icon: '💬' },
       { path: '/courses', label: 'Browse Courses', icon: '📚' }, // Added Browse Courses link
+      { path: '/student/courses', label: 'My Courses', icon: '📖' } ,
     ];
   }
 

@@ -29,6 +29,12 @@ import PaymentPage from './components/payment'; // Add this import
 import Messages from './pages/Messages'; // Import Messages page
 import ChatBox from './components/ChatBox'; // Import ChatBox component
 
+import CourseDetail from './pages/CourseDetail'; // Import CourseDetail page
+import ReviewForm from './pages/ReviewForm'; // Import ReviewForm page  
+import Gradesheet from './pages/Gradesheet'; // Import Gradesheet page
+import CourseList from './pages/CourseList'; // Import CourseList page
+
+
 function App() {
   const { user, loading } = useContext(AuthContext);
 
@@ -59,7 +65,6 @@ function App() {
             <Route path="/payment" element={<PaymentPage />} /> {/* Public payment route */}
             <Route path="/messages" element={<Messages />} /> {/* Messages route */}
             <Route path="/chat/:recipientId" element={<ChatBox />} /> {/* ChatBox route */}
-            <Route path="/courses" element={<CourseSearch />} />
 
             {/* Protected Routes */}
             {/* Admin Routes */}
@@ -102,6 +107,22 @@ function App() {
             <Route
               path="/student/profile/edit"
               element={<ProtectedRoute allowedRoles={['student']}><ProfileEdit /></ProtectedRoute>}
+            />
+            <Route
+              path="/student/courses/:courseId"
+              element={<ProtectedRoute allowedRoles={['student']}><CourseDetail /></ProtectedRoute>}
+            />
+            <Route
+              path="/student/courses/:courseId/review"
+              element={<ProtectedRoute allowedRoles={['student']}><ReviewForm /></ProtectedRoute>}  
+            />
+            <Route
+              path="/student/courses/:courseId/gradesheet"
+              element={<ProtectedRoute allowedRoles={['student']}><Gradesheet /></ProtectedRoute>}
+            />
+            <Route
+              path="/student/courses"
+              element={<ProtectedRoute allowedRoles={['student']}><CourseList /></ProtectedRoute>} 
             />
             {/* Add Payment Page route for students */}
 
