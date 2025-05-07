@@ -8,6 +8,7 @@ import CourseSearch from './components/CourseSearch';
 
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
+import AvailableSlots from './components/AvailableSlots'; // Import AvailableSlots
 
 import ManageUsers from './components/ManageUsers';
 import ManageCourses from './components/ManageCourses';
@@ -58,6 +59,10 @@ function App() {
         <div className="flex-grow-1 p-4">
           <Routes>
             {/* Public Routes */}
+            <Route
+              path="/available-slots"
+              element={<ProtectedRoute allowedRoles={['student', 'faculty', 'admin']}><AvailableSlots /></ProtectedRoute>}
+            />
             <Route path="/" element={user ? <Navigate to={getDefaultRedirect()} /> : <LandingPage />} />
             <Route path="/login" element={user ? <Navigate to={getDefaultRedirect()} /> : <Login />} />
             <Route path="/register" element={user ? <Navigate to={getDefaultRedirect()} /> : <Register />} />
@@ -65,7 +70,10 @@ function App() {
             <Route path="/payment" element={<PaymentPage />} /> {/* Public payment route */}
             <Route path="/messages" element={<Messages />} /> {/* Messages route */}
             <Route path="/chat/:recipientId" element={<ChatBox />} /> {/* ChatBox route */}
-
+            <Route
+              path="/courses/search"
+              element={<ProtectedRoute allowedRoles={['student', 'faculty', 'admin']}><CourseSearch /></ProtectedRoute>}
+            />
             {/* Protected Routes */}
             {/* Admin Routes */}
             <Route
@@ -114,7 +122,7 @@ function App() {
             />
             <Route
               path="/student/courses/:courseId/review"
-              element={<ProtectedRoute allowedRoles={['student']}><ReviewForm /></ProtectedRoute>}  
+              element={<ProtectedRoute allowedRoles={['student']}><ReviewForm /></ProtectedRoute>}
             />
             <Route
               path="/student/courses/:courseId/gradesheet"
@@ -122,7 +130,7 @@ function App() {
             />
             <Route
               path="/student/courses"
-              element={<ProtectedRoute allowedRoles={['student']}><CourseList /></ProtectedRoute>} 
+              element={<ProtectedRoute allowedRoles={['student']}><CourseList /></ProtectedRoute>}
             />
             {/* Add Payment Page route for students */}
 

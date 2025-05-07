@@ -18,28 +18,32 @@ export default function Sidebar() {
       { path: '/admin/notifications', label: 'Send Notification' },
       { path: '/admin/reports', label: 'Reports' },
       { path: '/messages', label: 'Messages', icon: '✉️' },
-      { path: '/chat/:recipientId', label: 'Chat', icon: '💬' },
-      { path: '/courses', label: 'Browse Courses', icon: '🔍' }, // Custom icon for Browse Courses
+      { path: '/chat/1', label: 'Chat', icon: '💬' },
+      { path: '/courses/search', label: 'Browse Courses', icon: '🔍' },
+      { path: '/available-slots', label: 'Available Slots', icon: '🕒' },  // <- Fixed path
     ];
   } else if (user?.role === 'faculty') {
     links = [
       { path: '/faculty/dashboard', label: 'Dashboard' },
       { path: '/faculty/profile', label: 'Profile' },
-      { path: '/payment', label: 'Make Payment', icon: '💳' },
+      { path: '/faculty/payment', label: 'Make Payment', icon: '💳' },
       { path: '/messages', label: 'Messages', icon: '✉️' },
-      { path: '/chat/:recipientId', label: 'Chat', icon: '💬' },
-      { path: '/courses', label: 'Browse Courses', icon: '🔍' }, // Custom icon for Browse Courses
+      { path: '/chat/1', label: 'Chat', icon: '💬' },
+      // No /faculty/courses route defined yet, so you can omit this or create it later
     ];
   } else if (user?.role === 'student') {
     links = [
       { path: '/student/dashboard', label: 'Dashboard' },
       { path: '/student/profile', label: 'Profile' },
-      { path: '/payment', label: 'Make Payment', icon: '💳' },
+      { path: '/student/payment', label: 'Make Payment', icon: '💳' },
       { path: '/messages', label: 'Messages', icon: '✉️' },
-      { path: '/chat/:recipientId', label: 'Chat', icon: '💬' },
-      { path: '/student/courses', label: 'My Courses', icon: '📖' } ,
+      { path: '/chat/1', label: 'Chat', icon: '💬' }, // Optional: use a real recipientId dynamically
+      { path: '/student/courses', label: 'My Courses', icon: '📖' },
+      { path: '/courses/search', label: 'Browse Courses', icon: '🔍' },
+      { path: '/available-slots', label: 'Available Slots', icon: '🕒' }, // ✅ fixed
     ];
   }
+
 
   return (
     <Nav className="flex-column sidebar bg-light vh-100 p-3" style={{ width: 220 }}>
