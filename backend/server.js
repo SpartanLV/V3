@@ -7,12 +7,8 @@ const { createServer } = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const path = require('path');
-<<<<<<< Updated upstream
-
-=======
 const cron = require('node-cron');
 const bookingRoutes = require('./routes/bookingRoutes');
->>>>>>> Stashed changes
 // Route imports
 const fileUpload = require('express-fileupload');
 const productRoutes = require('./routes/products');
