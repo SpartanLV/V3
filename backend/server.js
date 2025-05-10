@@ -7,8 +7,14 @@ const { createServer } = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const path = require('path');
+<<<<<<< Updated upstream
 
+=======
+const cron = require('node-cron');
+const bookingRoutes = require('./routes/bookingRoutes');
+>>>>>>> Stashed changes
 // Route imports
+const fileUpload = require('express-fileupload');
 const productRoutes = require('./routes/products');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
@@ -30,6 +36,11 @@ app.use(cors({
   credentials: true
 }));
 
+cron.schedule('0 3 * * *', () => {
+  require('./routes/bookingRoutes').generateSlots()
+    .then(() => console.log('Slots generated successfully'))
+    .catch(err => console.error('Error generating slots:', err));
+});
 // Body parser & static file serving
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -104,6 +115,11 @@ io.on('connection', (socket) => {
 app.set('io', io);
 
 // === ROUTES MOUNTING ===
+app.use(fileUpload({
+  useTempFiles: true,
+  tempFileDir: '/tmp/'
+}));
+app.use('/api/courses', courseRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use(
@@ -120,7 +136,7 @@ console.log('User routes mounted at /api/users, messages at /api/messages');
 app.use('/api/enrollments', enrollmentRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/courses', courseRoutes);
-app.use('/api/progress', progressRoutes);
+app.use('/api/progress', require('./middleware/auth'), progressRoutes);
 app.use('/api/grades', gradeRoutes);
 
 const PORT = process.env.PORT || 5000;

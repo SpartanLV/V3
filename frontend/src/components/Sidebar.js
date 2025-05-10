@@ -36,8 +36,15 @@ export default function Sidebar() {
       { path: '/student/profile', label: 'Profile' },
       { path: '/payment', label: 'Make Payment', icon: '💳' },
       { path: '/messages', label: 'Messages', icon: '✉️' },
+<<<<<<< Updated upstream
       { path: '/chat/:recipientId', label: 'Chat', icon: '💬' },
       { path: '/student/courses', label: 'My Courses', icon: '📖' } ,
+=======
+      { path: '/chat/1', label: 'Chat', icon: '💬' }, // Optional: use a real recipientId dynamically
+      { path: '/student/courses', label: 'My Courses', icon: '📖' },
+      //{ path: '/courses/search', label: 'Browse Courses', icon: '🔍' },
+      { path: '/available-slots', label: 'Available Slots', icon: '🕒' }, // ✅ fixed
+>>>>>>> Stashed changes
     ];
   }
 

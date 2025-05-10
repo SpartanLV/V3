@@ -58,15 +58,46 @@ const CourseDetail = () => {
       }
       <ProgressBar percent={percent} />
 
+      // Update the materials rendering section
       <div>
-        <h3>Materials</h3>
-        {content.materials.map(mat => (
-          <div key={mat._id}>
-            {/* render based on type */}
-            <a href={`http://localhost:5000/uploads/${mat.filename}`} target="_blank" rel="noreferrer">{mat.title}</a>
-            <button onClick={handleCompleteUnit}>Mark Complete</button>
+        <h3>Course Materials</h3>
+        {content.materials.length > 0 ? (
+          <div className="materials-list">
+            {content.materials.map((mat, index) => (
+              <div key={mat._id} className="material-item">
+                <div className="material-number">{index + 1}.</div>
+                <a 
+                  href={mat.url} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="material-link"
+                >
+                  {mat.title} ({mat.type.toUpperCase()})
+                </a>
+                {enrolled && (
+                  <button 
+                    onClick={handleCompleteUnit}
+                    className="mark-complete-btn"
+                  >
+                    ✓ Mark Complete
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
-        ))}
+        ) : (
+          <div className="no-materials">
+            <p>No materials available for this course yet.</p>
+            {user?.role === 'faculty' && (
+              <button 
+                onClick={() => navigate(`/faculty/courses/${id}/add-material`)}
+                className="add-material-btn"
+              >
+                Add Material
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       <div>
